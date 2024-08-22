@@ -16,10 +16,10 @@ server/node_modules/
 server/.bun/
 
 # Prettier configuration files
-client/.prettierignore
-client/.prettierrc
-server/.prettierignore
-server/.prettierrc
+# client/.prettierignore
+# client/.prettierrc
+# server/.prettierignore
+# server/.prettierrc
 
 # Build output
 client/dist/
