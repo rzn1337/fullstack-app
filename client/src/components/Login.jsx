@@ -3,8 +3,9 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 
 function Login() {
+    const { register, handleSubmit } = useForm();
     const loginUser = (data) => {
-        // TODO: Axios api call
+        axios.post("/api/v1/users/login", data)
     };
     return (
         <form onSubmit={handleSubmit(loginUser)}>

@@ -1,9 +1,12 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 function Signup() {
     const { register, handleSubmit } = useForm();
+
+    const navigate = useNavigate();
 
     const createUser = (data) => {
         axios
@@ -30,7 +33,7 @@ function Signup() {
                 <input
                     className="m-2 rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:outline-slate-950 focus:ring-ring focus:border-transparent"
                     placeholder="Password"
-                    type="text"
+                    type="password"
                     {...register("password", {
                         required: true,
                     })}
