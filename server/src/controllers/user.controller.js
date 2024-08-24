@@ -21,7 +21,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-    console.log(req)
+    console.log(req);
     const { username, password, email } = req.body;
 
     // check if all fields are valid (not null and not empty)
@@ -66,7 +66,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res, next) => {
     const { username, password } = req.body;
 
-    console.log(req.body)
+    console.log(req.body);
 
     if (!username && !password) {
         throw new ApiError(
@@ -83,7 +83,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
 
     const isPasswordCorrect = await user.isPasswordCorrect(password);
 
-    console.log(user)
+    console.log(user);
 
     if (!isPasswordCorrect) {
         throw new ApiError(401, "Password is incorrect");
@@ -106,7 +106,37 @@ const loginUser = asyncHandler(async (req, res, next) => {
         .status(200)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
-        .json(new ApiResponse(200, {user: loggedInUser} ,"User logged in successfully"));
+        .json(
+            new ApiResponse(
+                200,
+                { user: loggedInUser },
+                "User logged in successfully"
+            )
+        );
 });
 
-export { registerUser, loginUser };
+const logoutUser = asyncHandler(async (req, res, next) => {
+    const { user } = req;
+    await User.findByIdAndUpdate(
+        user._id,
+        {
+            $unset: {
+                refreshToken: 1,
+            },
+        },
+        { new: true }
+    );
+
+    const options = {
+        httpOnly: true,
+        secure: true,
+    };
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new ApiResponse(200, {}, "User logged out successfully"));
+});
+
+export { registerUser, loginUser, logoutUser };

@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
     const { register, handleSubmit } = useForm();
@@ -11,7 +11,7 @@ function Signup() {
     const createUser = (data) => {
         axios
             .post("/api/v1/users/register", data)
-            .then((response) => console.log(response))
+            .then(navigate("/login"))
             .catch((error) => console.log(error));
     };
 
