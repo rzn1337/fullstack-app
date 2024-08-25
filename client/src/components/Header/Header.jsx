@@ -1,9 +1,12 @@
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../store/authSlice";
+import { useEffect } from "react";
 
 function Header() {
+    const username = useSelector(state => state.auth.userData?.username);
     const dispatch = useDispatch();
+    useEffect(() => {}, [username])
     const handleLogout = () => {
         axios
             .post("/api/v1/users/logout")
@@ -13,6 +16,7 @@ function Header() {
     return (
         <div className="flex justify-between items-center">
             <h1 className="mx-2">Header</h1>
+            <h1 className="mx-2">Welcome {username ? `${username}` : ""}</h1>
             <button
                 type="button"
                 onClick={handleLogout}
