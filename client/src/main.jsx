@@ -11,10 +11,12 @@ import {
 } from "react-router-dom";
 import Signup from "./components/Signup.jsx";
 import Login from "./components/Login.jsx";
+import Canvas from "./components/Canvas/Canvas.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<Home />}>
+            <Route path="canvas" element={<Canvas />} />
             <Route path="register" element={<Signup />} />
             <Route path="login" element={<Login />} />
         </Route>
