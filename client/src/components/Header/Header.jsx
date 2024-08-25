@@ -1,14 +1,23 @@
 import axios from "axios";
-import React from "react";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../../store/authSlice";
 
 function Header() {
+    const dispatch = useDispatch();
     const handleLogout = () => {
-        axios.post("/api/v1/users/logout")
+        axios
+            .post("/api/v1/users/logout")
+            .then(dispatch(logoutUser()))
+            .catch((error) => console.log(error));
     };
     return (
         <div className="flex justify-between items-center">
-            <h1 className="mx-auto">Header</h1>
-            <button type="button" onClick={handleLogout}>
+            <h1 className="mx-2">Header</h1>
+            <button
+                type="button"
+                onClick={handleLogout}
+                className="px-4 py-2 bg-black text-white rounded-2xl hover:bg-slate-800 transition-colors"
+            >
                 Logout
             </button>
         </div>
