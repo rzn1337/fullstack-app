@@ -6,42 +6,110 @@ function Canvas() {
     const generator = rough.generator();
 
     const [elements, setElements] = useState([]);
-    const [drawing, setDrawing] = useState(false); // only tracks mouse when drawing is true
+    const [action, setAction] = useState("none"); // only tracks mouse when action is true
     const [tool, setTool] = useState("line");
+    const [selectedElement, setSelectedElement] = useState(null);
 
-    const createElement = (x1, y1, x2, y2) => {
+    const createElement = (id, x1, y1, x2, y2, type) => {
         let roughElement;
-        if (tool === "line") {
+        if (type === "line") {
             roughElement = generator.line(x1, y1, x2, y2);
-        } else if (tool === "rectangle") {
+        } else if (type === "rectangle") {
             roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1);
         }
-        return { x1, y1, x2, y2, roughElement };
+        return { id, x1, y1, x2, y2, type, roughElement };
+    };
+
+    const isWithInElement = (x, y, element) => {
+        const { x1, y1, x2, y2, type } = element;
+
+        if (type === "rectangle") {
+            const minX = Math.min(x1, x2);
+            const maxX = Math.max(x1, x2);
+            const minY = Math.min(y1, y2);
+            const maxY = Math.max(y1, y2);
+            return x >= minX && x <= maxX && y >= minY && y <= maxY;
+        } else if (type === "line") {
+            const a = { x: x1, y: y1 };
+            const b = { x: x2, y: y2 };
+            const c = { x, y };
+            const offset = distance(a, b) - (distance(a, c) + distance(b, c));
+            return Math.abs(offset) < 1;
+        }
+    };
+
+    const distance = (a, b) =>
+        Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+
+    const getElementAtPosition = (x, y, elements) => {
+        return elements.find((element) => isWithInElement(x, y, element));
     };
 
     const handleMouseDown = (e) => {
-        setDrawing(true);
         const { clientX, clientY } = e;
-        const element = createElement(clientX, clientY, clientX, clientY);
-        setElements((elements) => [...elements, element]);
-        console.log(elements);
+        if (tool === "select") {
+            const element = getElementAtPosition(clientX, clientY, elements);
+            if (element) {
+                const offsetX = clientX - element.x1;
+                const offsetY = clientY - element.y1;
+                setSelectedElement({ ...element, offsetX, offsetY });
+                setAction("moving");
+            }
+        } else {
+            const id = elements.length;
+            const type = tool;
+            const element = createElement(
+                id,
+                clientX,
+                clientY,
+                clientX,
+                clientY,
+                type
+            );
+            setElements((elements) => [...elements, element]);
+            setAction("drawing");
+        }
     };
 
     const handleMouseMove = (e) => {
-        if (!drawing) return;
-
         const { clientX, clientY } = e;
 
-        const i = elements.length - 1;
-        const { x1, y1 } = elements[i];
+        if (tool === "select") {
+            event.target.style.cursor = getElementAtPosition(
+                clientX,
+                clientY,
+                elements
+            )
+                ? "move"
+                : "default";
+        }
 
-        const updatedElement = createElement(x1, y1, clientX, clientY);
-        setElements((elements) => [...elements.slice(0, i), updatedElement]); // update the elements array
-        console.log(clientX, clientY);
+        if (action === "drawing") {
+            const i = elements.length - 1;
+
+            const { x1, y1, type } = elements[i];
+
+            updateElement(i, x1, y1, clientX, clientY, type);
+        } else if (action === "moving") {
+            const { id, x1, x2, y1, y2, type, offsetX, offsetY } =
+                selectedElement;
+            const width = x2 - x1;
+            const height = y2 - y1;
+            const newX = clientX - offsetX;
+            const newY = clientY - offsetY;
+            updateElement(id, newX, newY, newX + width, newY + height, type);
+        }
+    };
+
+    const updateElement = (id, x1, y1, x2, y2, type) => {
+        const updatedElement = createElement(id, x1, y1, x2, y2, type);
+        const elementsCopy = [...elements];
+        elementsCopy[id] = updatedElement;
+        setElements(elementsCopy);
     };
 
     const handleMouseUp = (e) => {
-        setDrawing(false);
+        setAction("none");
     };
 
     useLayoutEffect(() => {

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 function Toolbar({ setTool }) {
     const tools = [
-        // { name: "Select", icon: "◱" },
+        { name: "Select", icon: "◱" },
         { name: "Rectangle", icon: "□" },
         // { name: "Ellipse", icon: "○" },
         // { name: "Arrow", icon: "→" },
