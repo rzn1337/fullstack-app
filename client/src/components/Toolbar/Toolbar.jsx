@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { PencilLine, Minus, RectangleHorizontal, Move, Scaling } from "lucide-react";
 
 function Toolbar({ setTool }) {
     const tools = [
-        { name: "Select", icon: "◱" },
-        { name: "Rectangle", icon: "□" },
-        // { name: "Ellipse", icon: "○" },
+        { name: "Select", icon: <Move strokeWidth={2}/> },
+        { name: "Rectangle", icon: <RectangleHorizontal strokeWidth={2}/> },
+        { name: "Resize", icon: <Scaling strokeWidth={2}/> },
         // { name: "Arrow", icon: "→" },
-        { name: "Line", icon: "-" },
-        // { name: "Freedraw", icon: "✎" },
+        { name: "Line", icon: <Minus strokeWidth={2}/> },
+        { name: "Freedraw", icon: <PencilLine strokeWidth={2}/> },
         // { name: "Text", icon: "T" },
         // { name: "Image", icon: "🖼" },
         // { name: "Eraser", icon: "⌫" },
