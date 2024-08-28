@@ -20,21 +20,29 @@ function Canvas() {
         return { id, x1, y1, x2, y2, type, roughElement };
     };
 
-    const isWithInElement = (x, y, element) => {
-        const { x1, y1, x2, y2, type } = element;
+    const nearestPoint = (x, y, x1, y1, name) => {
+        return Math.abs(x - x1) < 10 && Math.abs(y - y1) < 10 ? name : null;
+    };
 
+    const positionWithInElement = (x, y, element) => {
+        const { x1, y1, x2, y2, type } = element;
         if (type === "rectangle") {
-            const minX = Math.min(x1, x2);
-            const maxX = Math.max(x1, x2);
-            const minY = Math.min(y1, y2);
-            const maxY = Math.max(y1, y2);
-            return x >= minX && x <= maxX && y >= minY && y <= maxY;
+            const topLeft = nearestPoint(x, y, x1, y1, "tl");
+            const topRight = nearestPoint(x, y, x2, y1, "tr");
+            const bottonLeft = nearestPoint(x, y, x1, y2, "bl");
+            const bottomRight = nearestPoint(x, y, x2, y2, "br");
+            const inside =
+                x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
+            return topLeft || topRight || bottonLeft || bottomRight || inside;
         } else if (type === "line") {
             const a = { x: x1, y: y1 };
             const b = { x: x2, y: y2 };
             const c = { x, y };
             const offset = distance(a, b) - (distance(a, c) + distance(b, c));
-            return Math.abs(offset) < 1;
+            const inside = Math.abs(offset) < 1 ? "inside" : null;
+            const start = nearestPoint(x, y, x1, y1, "start");
+            const end = nearestPoint(x, y, x2, y2, "end");
+            return start || end || inside;
         }
     };
 
@@ -42,7 +50,12 @@ function Canvas() {
         Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 
     const getElementAtPosition = (x, y, elements) => {
-        return elements.find((element) => isWithInElement(x, y, element));
+        return elements
+            .map((element) => ({
+                ...element,
+                position: positionWithInElement(x, y, element),
+            }))
+            .find((element) => element.position !== null);
     };
 
     const handleMouseDown = (e) => {
@@ -53,7 +66,11 @@ function Canvas() {
                 const offsetX = clientX - element.x1;
                 const offsetY = clientY - element.y1;
                 setSelectedElement({ ...element, offsetX, offsetY });
-                setAction("moving");
+                if (element.position === "inside") {
+                    setAction("moving");
+                } else {
+                    setAction("resizing");
+                }
             }
         } else {
             const id = elements.length;
@@ -67,7 +84,24 @@ function Canvas() {
                 type
             );
             setElements((elements) => [...elements, element]);
+            setSelectedElement(element);
             setAction("drawing");
+        }
+    };
+
+    const cursorForPosition = (position) => {
+        console.log(position);
+        switch (position) {
+            case "tl":
+            case "br":
+            case "start":
+            case "end":
+                return "nwse-resize";
+            case "tr":
+            case "bl":
+                return "nesw-resize";
+            default:
+                return "move";
         }
     };
 
@@ -75,12 +109,13 @@ function Canvas() {
         const { clientX, clientY } = e;
 
         if (tool === "select") {
-            event.target.style.cursor = getElementAtPosition(
+            const element = getElementAtPosition(clientX, clientY, elements);
+            e.target.style.cursor = getElementAtPosition(
                 clientX,
                 clientY,
                 elements
             )
-                ? "move"
+                ? cursorForPosition(element.position)
                 : "default";
         }
 
@@ -98,6 +133,34 @@ function Canvas() {
             const newX = clientX - offsetX;
             const newY = clientY - offsetY;
             updateElement(id, newX, newY, newX + width, newY + height, type);
+        } else if (action === "resizing") {
+            const { id, type, position, ...coordinates } = selectedElement;
+            const { x1, y1, x2, y2 } = resizedCoordinates(
+                clientX,
+                clientY,
+                position,
+                coordinates
+            );
+            updateElement(id, x1, y1, x2, y2, type);
+        }
+    };
+
+    const resizedCoordinates = (clientX, clientY, position, coordinates) => {
+        const { x1, y1, x2, y2 } = coordinates;
+        console.log(position);
+        switch (position) {
+            case "tl":
+            case "start":
+                return { x1: clientX, y1: clientY, x2, y2 };
+            case "tr":
+                return { x1, y1: clientY, x2: clientX, y2 };
+            case "bl":
+                return { x1: clientX, y1, x2, y2: clientY };
+            case "br":
+            case "end":
+                return { x1, y1, x2: clientX, y2: clientY };
+            default:
+                return null;
         }
     };
 
@@ -126,10 +189,10 @@ function Canvas() {
     };
 
     const handleMouseUp = (e) => {
-        const i = elements.length - 1;
+        const i = selectedElement.id;
         const { id, type } = elements[i];
 
-        if (action === "drawing") {
+        if (action === "drawing" || action === "resizing") {
             const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[i]);
             updateElement(id, x1, y1, x2, y2, type);
         }
@@ -145,6 +208,11 @@ function Canvas() {
         const roughCanvas = rough.canvas(canvas);
 
         elements.forEach(({ roughElement }) => roughCanvas.draw(roughElement));
+        console.log(
+            "selected element:",
+            selectedElement?.id,
+            selectedElement?.type
+        );
     }, [elements]);
 
     return (
