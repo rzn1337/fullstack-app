@@ -1,5 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header/Header";
+import Button from "./Button";
 
 function Home() {
     const location = useLocation();
@@ -26,3 +27,4 @@ function Home() {
 }
 
 export default Home;
+

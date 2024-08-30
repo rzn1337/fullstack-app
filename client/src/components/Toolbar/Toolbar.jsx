@@ -8,6 +8,7 @@ function Toolbar({ setTool }) {
         // { name: "Arrow", icon: "→" },
         { name: "Line", icon: <Minus strokeWidth={2}/> },
         { name: "Freedraw", icon: <PencilLine strokeWidth={2}/> },
+        
         // { name: "Text", icon: "T" },
         // { name: "Image", icon: "🖼" },
         // { name: "Eraser", icon: "⌫" },

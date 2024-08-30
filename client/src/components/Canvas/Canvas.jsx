@@ -1,14 +1,45 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState, useRef } from "react";
 import rough from "roughjs/bundled/rough.esm";
 import Toolbar from "../Toolbar/Toolbar";
+import BottomToolbar from "../BottomToolbar/BottomToolbar";
+
+const useHistory = (initState) => {
+    const [index, setIndex] = useState(0);
+    const [history, setHistory] = useState([initState]);
+
+    const setState = (action, overwrite = false) => {
+        const newState =
+            typeof action === "function" ? action(history[index]) : action;
+        if (overwrite) {
+            const historyCopy = [...history];
+            historyCopy[index] = newState;
+            setHistory(historyCopy);
+        } else {
+            const updatedState = [...history].slice(0, index + 1)
+            setHistory([...updatedState, newState]);
+            setIndex((index) => index + 1);
+        }
+    };
+
+    const undo = () => {
+        index > 0 && setIndex((index) => index - 1);
+    };
+    const redo = () => {
+        index < history.length - 1 && setIndex((index) => index + 1);
+    };
+
+    return [history[index], setState, undo, redo];
+};
 
 function Canvas() {
-    const generator = rough.generator();
+    const generator = rough.generator({ stroke: "green" });
 
-    const [elements, setElements] = useState([]);
+    const [elements, setElements, undo, redo] = useHistory([]);
+
     const [action, setAction] = useState("none"); // only tracks mouse when action is true
     const [tool, setTool] = useState("line");
     const [selectedElement, setSelectedElement] = useState(null);
+    const canvasRef = useRef(null);
 
     const createElement = (id, x1, y1, x2, y2, type) => {
         let roughElement;
@@ -66,6 +97,7 @@ function Canvas() {
                 const offsetX = clientX - element.x1;
                 const offsetY = clientY - element.y1;
                 setSelectedElement({ ...element, offsetX, offsetY });
+                setElements(prev => prev);
                 if (element.position === "inside") {
                     setAction("moving");
                 } else {
@@ -90,7 +122,6 @@ function Canvas() {
     };
 
     const cursorForPosition = (position) => {
-        console.log(position);
         switch (position) {
             case "tl":
             case "br":
@@ -147,7 +178,6 @@ function Canvas() {
 
     const resizedCoordinates = (clientX, clientY, position, coordinates) => {
         const { x1, y1, x2, y2 } = coordinates;
-        console.log(position);
         switch (position) {
             case "tl":
             case "start":
@@ -168,7 +198,8 @@ function Canvas() {
         const updatedElement = createElement(id, x1, y1, x2, y2, type);
         const elementsCopy = [...elements];
         elementsCopy[id] = updatedElement;
-        setElements(elementsCopy);
+        setElements(elementsCopy, true);
+        console.log(updatedElement);
     };
 
     const adjustElementCoordinates = (element) => {
@@ -188,37 +219,41 @@ function Canvas() {
         }
     };
 
-    const handleMouseUp = (e) => {
-        const i = selectedElement.id;
-        const { id, type } = elements[i];
+    const handleMouseUp = () => {
+        if (selectedElement) {
+            const i = selectedElement.id;
+            const { id, type } = elements[i];
 
-        if (action === "drawing" || action === "resizing") {
-            const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[i]);
-            updateElement(id, x1, y1, x2, y2, type);
+            if (action === "drawing" || action === "resizing") {
+                const { x1, y1, x2, y2 } = adjustElementCoordinates(
+                    elements[i]
+                );
+                updateElement(id, x1, y1, x2, y2, type);
+            }
         }
         setAction("none");
+        setSelectedElement(null);
         window.localStorage.setItem("canvas", elements);
     };
 
     useLayoutEffect(() => {
-        const canvas = document.getElementById("canvas");
+        // const canvas = document.getElementById("canvas");
+        const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const roughCanvas = rough.canvas(canvas);
+        // const config = { stroke: "green" };
+
+        const roughCanvas = rough.canvas(canvasRef.current);
 
         elements.forEach(({ roughElement }) => roughCanvas.draw(roughElement));
-        console.log(
-            "selected element:",
-            selectedElement?.id,
-            selectedElement?.type
-        );
     }, [elements]);
 
     return (
         <div>
             <Toolbar setTool={setTool} />
             <canvas
+                ref={canvasRef}
                 id="canvas"
                 // style={{ backgroundColor: "gray" }}
                 width={window.innerWidth}
@@ -229,6 +264,7 @@ function Canvas() {
             >
                 Canvas
             </canvas>
+            <BottomToolbar undo={undo} redo={redo} />
         </div>
     );
 }
