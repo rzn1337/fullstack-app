@@ -2,34 +2,8 @@ import { useLayoutEffect, useState, useRef, useEffect } from "react";
 import rough from "roughjs/bundled/rough.esm";
 import Toolbar from "../Toolbar/Toolbar";
 import BottomToolbar from "../BottomToolbar/BottomToolbar";
+import useHistory from "../../hooks/useHistory";
 
-const useHistory = (initState) => {
-    const [index, setIndex] = useState(0);
-    const [history, setHistory] = useState([initState]);
-
-    const setState = (action, overwrite = false) => {
-        const newState =
-            typeof action === "function" ? action(history[index]) : action;
-        if (overwrite) {
-            const historyCopy = [...history];
-            historyCopy[index] = newState;
-            setHistory(historyCopy);
-        } else {
-            const updatedState = [...history].slice(0, index + 1);
-            setHistory([...updatedState, newState]);
-            setIndex((index) => index + 1);
-        }
-    };
-
-    const undo = () => {
-        index > 0 && setIndex((index) => index - 1);
-    };
-    const redo = () => {
-        index < history.length - 1 && setIndex((index) => index + 1);
-    };
-
-    return [history[index], setState, undo, redo];
-};
 
 function Canvas() {
     const generator = rough.generator({ stroke: "green" });
@@ -199,7 +173,6 @@ function Canvas() {
         const elementsCopy = [...elements];
         elementsCopy[id] = updatedElement;
         setElements(elementsCopy, true);
-        console.log(updatedElement);
     };
 
     const adjustElementCoordinates = (element) => {
@@ -251,7 +224,7 @@ function Canvas() {
 
     useEffect(() => {
         const undoRedoFunction = (e) => {
-            console.log(e.metaKey, e.ctrlKey, e.shiftKey, e.key);
+            // console.log(e.metaKey, e.ctrlKey, e.shiftKey, e.key);
             if (e.metaKey || e.ctrlKey) {
                 if (e.key === "y") {
                     redo();
