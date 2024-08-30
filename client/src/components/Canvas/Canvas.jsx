@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, useRef } from "react";
+import { useLayoutEffect, useState, useRef, useEffect } from "react";
 import rough from "roughjs/bundled/rough.esm";
 import Toolbar from "../Toolbar/Toolbar";
 import BottomToolbar from "../BottomToolbar/BottomToolbar";
@@ -15,7 +15,7 @@ const useHistory = (initState) => {
             historyCopy[index] = newState;
             setHistory(historyCopy);
         } else {
-            const updatedState = [...history].slice(0, index + 1)
+            const updatedState = [...history].slice(0, index + 1);
             setHistory([...updatedState, newState]);
             setIndex((index) => index + 1);
         }
@@ -97,7 +97,7 @@ function Canvas() {
                 const offsetX = clientX - element.x1;
                 const offsetY = clientY - element.y1;
                 setSelectedElement({ ...element, offsetX, offsetY });
-                setElements(prev => prev);
+                setElements((prev) => prev);
                 if (element.position === "inside") {
                     setAction("moving");
                 } else {
@@ -248,6 +248,24 @@ function Canvas() {
 
         elements.forEach(({ roughElement }) => roughCanvas.draw(roughElement));
     }, [elements]);
+
+    useEffect(() => {
+        const undoRedoFunction = (e) => {
+            console.log(e.metaKey, e.ctrlKey, e.shiftKey, e.key);
+            if (e.metaKey || e.ctrlKey) {
+                if (e.key === "y") {
+                    redo();
+                } else if (e.key === "z") {
+                    undo();
+                }
+            }
+        };
+
+        document.addEventListener("keydown", undoRedoFunction);
+        return () => {
+            document.removeEventListener("keydown", undoRedoFunction);
+        }
+    }, [undo, redo]);
 
     return (
         <div>
