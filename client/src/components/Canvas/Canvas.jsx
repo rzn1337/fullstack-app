@@ -3,7 +3,7 @@ import rough from "roughjs/bundled/rough.esm";
 import Toolbar from "../Toolbar/Toolbar";
 import BottomToolbar from "../BottomToolbar/BottomToolbar";
 import useHistory from "../../hooks/useHistory";
-
+import getStroke from "perfect-freehand";
 
 function Canvas() {
     const generator = rough.generator({ stroke: "green" });
@@ -16,13 +16,20 @@ function Canvas() {
     const canvasRef = useRef(null);
 
     const createElement = (id, x1, y1, x2, y2, type) => {
-        let roughElement;
-        if (type === "line") {
-            roughElement = generator.line(x1, y1, x2, y2);
-        } else if (type === "rectangle") {
-            roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1);
+        switch (type) {
+            case "line":
+            case "rectangle":
+                const roughElement =
+                    type === "line"
+                        ? generator.line(x1, y1, x2, y2)
+                        : generator.rectangle(x1, y1, x2 - x1, y2 - y1);
+                return { id, x1, y1, x2, y2, type, roughElement };
+            case "freedraw":
+                console.log("dodod");
+                return { id, type, points: [{ x: x1, y: y1 }] };
+            default:
+                throw new Error(`Unrecognized type ${type}`);
         }
-        return { id, x1, y1, x2, y2, type, roughElement };
     };
 
     const nearestPoint = (x, y, x1, y1, name) => {
@@ -169,9 +176,21 @@ function Canvas() {
     };
 
     const updateElement = (id, x1, y1, x2, y2, type) => {
-        const updatedElement = createElement(id, x1, y1, x2, y2, type);
         const elementsCopy = [...elements];
-        elementsCopy[id] = updatedElement;
+        switch (type) {
+            case "line":
+            case "rectangle":
+                elementsCopy[id] = createElement(id, x1, y1, x2, y2, type);
+                break;
+            case "freedraw":
+                elementsCopy[id].points = [
+                    ...elementsCopy[id].points,
+                    { x: x2, y: y2 },
+                ];
+                break;
+            default:
+                throw new Error(`Unrecognized type: ${type}`);
+        }
         setElements(elementsCopy, true);
     };
 
@@ -192,12 +211,17 @@ function Canvas() {
         }
     };
 
+    const adjustmentRequired = (type) => ["line", "rectangle"].includes(type);
+
     const handleMouseUp = () => {
         if (selectedElement) {
             const i = selectedElement.id;
             const { id, type } = elements[i];
 
-            if (action === "drawing" || action === "resizing") {
+            if (
+                (action === "drawing" || action === "resizing") &&
+                adjustmentRequired(type)
+            ) {
                 const { x1, y1, x2, y2 } = adjustElementCoordinates(
                     elements[i]
                 );
@@ -219,8 +243,64 @@ function Canvas() {
 
         const roughCanvas = rough.canvas(canvasRef.current);
 
-        elements.forEach(({ roughElement }) => roughCanvas.draw(roughElement));
+        // elements.forEach(({ roughElement }) => roughCanvas.draw(roughElement));
+        console.log(elements);
+        elements.forEach((element) => drawElement(roughCanvas, ctx, element));
     }, [elements]);
+
+    const drawElement = (roughCanvas, ctx, element) => {
+        console.log(element);
+        const { type } = element;
+        switch (type) {
+            case "line":
+            case "rectangle":
+                roughCanvas.draw(element.roughElement);
+                break;
+            case "freedraw":
+                const stroke = getSvgPathFromStroke(getStroke(element.points, {size: 5, stroke: "#1A1A1A"}));
+                ctx.fillStyle = "pink";
+                ctx.fill(new Path2D(stroke));
+                break;
+            default:
+                throw new Error(`Unrecognized Type: ${type}`);
+        }
+    };
+
+    const average = (a, b) => (a + b) / 2;
+
+    const getSvgPathFromStroke = (points, closed = true) => {
+        const len = points.length;
+
+        if (len < 4) {
+            return ``;
+        }
+
+        let a = points[0];
+        let b = points[1];
+        const c = points[2];
+
+        let result = `M${a[0].toFixed(2)},${a[1].toFixed(2)} Q${b[0].toFixed(
+            2
+        )},${b[1].toFixed(2)} ${average(b[0], c[0]).toFixed(2)},${average(
+            b[1],
+            c[1]
+        ).toFixed(2)} T`;
+
+        for (let i = 2, max = len - 1; i < max; i++) {
+            a = points[i];
+            b = points[i + 1];
+            result += `${average(a[0], b[0]).toFixed(2)},${average(
+                a[1],
+                b[1]
+            ).toFixed(2)} `;
+        }
+
+        if (closed) {
+            result += "Z";
+        }
+
+        return result;
+    };
 
     useEffect(() => {
         const undoRedoFunction = (e) => {
@@ -237,7 +317,7 @@ function Canvas() {
         document.addEventListener("keydown", undoRedoFunction);
         return () => {
             document.removeEventListener("keydown", undoRedoFunction);
-        }
+        };
     }, [undo, redo]);
 
     return (
