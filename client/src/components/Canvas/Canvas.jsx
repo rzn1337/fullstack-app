@@ -36,25 +36,52 @@ function Canvas() {
         return Math.abs(x - x1) < 10 && Math.abs(y - y1) < 10 ? name : null;
     };
 
+    const onLine = (x1, y1, x2, y2, x, y, maxOffset = 1) => {
+        const a = { x: x1, y: y1 };
+        const b = { x: x2, y: y2 };
+        const c = { x, y };
+        const offset = distance(a, b) - (distance(a, c) + distance(b, c));
+        return Math.abs(offset) < maxOffset ? "inside" : null;
+    };
+
     const positionWithInElement = (x, y, element) => {
         const { x1, y1, x2, y2, type } = element;
-        if (type === "rectangle") {
-            const topLeft = nearestPoint(x, y, x1, y1, "tl");
-            const topRight = nearestPoint(x, y, x2, y1, "tr");
-            const bottonLeft = nearestPoint(x, y, x1, y2, "bl");
-            const bottomRight = nearestPoint(x, y, x2, y2, "br");
-            const inside =
-                x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
-            return topLeft || topRight || bottonLeft || bottomRight || inside;
-        } else if (type === "line") {
-            const a = { x: x1, y: y1 };
-            const b = { x: x2, y: y2 };
-            const c = { x, y };
-            const offset = distance(a, b) - (distance(a, c) + distance(b, c));
-            const inside = Math.abs(offset) < 1 ? "inside" : null;
-            const start = nearestPoint(x, y, x1, y1, "start");
-            const end = nearestPoint(x, y, x2, y2, "end");
-            return start || end || inside;
+
+        switch (type) {
+            case "rectangle":
+                const topLeft = nearestPoint(x, y, x1, y1, "tl");
+                const topRight = nearestPoint(x, y, x2, y1, "tr");
+                const bottonLeft = nearestPoint(x, y, x1, y2, "bl");
+                const bottomRight = nearestPoint(x, y, x2, y2, "br");
+                const inside =
+                    x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
+                return (
+                    topLeft || topRight || bottonLeft || bottomRight || inside
+                );
+            case "line":
+                const on = onLine(x1, y1, x2, y2, x, y);
+                const start = nearestPoint(x, y, x1, y1, "start");
+                const end = nearestPoint(x, y, x2, y2, "end");
+                return start || end || on;
+            case "freedraw":
+                const betweenAnyPoint = element.points.some((point, index) => {
+                    const nextPoint = element.points[index + 1];
+                    if (!nextPoint) return false;
+                    return (
+                        onLine(
+                            point.x,
+                            point.y,
+                            nextPoint.x,
+                            nextPoint.y,
+                            x,
+                            y,
+                            5
+                        ) != null
+                    );
+                });
+                return betweenAnyPoint ? "inside" : null;
+            default:
+                throw new Error(`Unrecognized type: ${type}`);
         }
     };
 
@@ -75,10 +102,21 @@ function Canvas() {
         if (tool === "select") {
             const element = getElementAtPosition(clientX, clientY, elements);
             if (element) {
-                const offsetX = clientX - element.x1;
-                const offsetY = clientY - element.y1;
-                setSelectedElement({ ...element, offsetX, offsetY });
+                if (element.type === "freedraw") {
+                    const xOffsets = element.points.map(
+                        (point) => clientX - point.x
+                    );
+                    const yOffsets = element.points.map(
+                        (point) => clientY - point.y
+                    );
+                    setSelectedElement({ ...element, xOffsets, yOffsets });
+                } else {
+                    const offsetX = clientX - element.x1;
+                    const offsetY = clientY - element.y1;
+                    setSelectedElement({ ...element, offsetX, offsetY });
+                }
                 setElements((prev) => prev);
+
                 if (element.position === "inside") {
                     setAction("moving");
                 } else {
@@ -138,13 +176,35 @@ function Canvas() {
 
             updateElement(i, x1, y1, clientX, clientY, type);
         } else if (action === "moving") {
-            const { id, x1, x2, y1, y2, type, offsetX, offsetY } =
-                selectedElement;
-            const width = x2 - x1;
-            const height = y2 - y1;
-            const newX = clientX - offsetX;
-            const newY = clientY - offsetY;
-            updateElement(id, newX, newY, newX + width, newY + height, type);
+            if (selectedElement.type === "freedraw") {
+                const newPoints = selectedElement.points.map((_, index) => {
+                    return {
+                        x: clientX - selectedElement.xOffsets[index],
+                        y: clientY - selectedElement.yOffsets[index],
+                    };
+                });
+                const elementsCopy = [...elements];
+                elementsCopy[selectedElement.id] = {
+                    ...elementsCopy[selectedElement.id],
+                    points: newPoints,
+                };
+                setElements(elementsCopy, true);
+            } else {
+                const { id, x1, x2, y1, y2, type, offsetX, offsetY } =
+                    selectedElement;
+                const width = x2 - x1;
+                const height = y2 - y1;
+                const newX = clientX - offsetX;
+                const newY = clientY - offsetY;
+                updateElement(
+                    id,
+                    newX,
+                    newY,
+                    newX + width,
+                    newY + height,
+                    type
+                );
+            }
         } else if (action === "resizing") {
             const { id, type, position, ...coordinates } = selectedElement;
             const { x1, y1, x2, y2 } = resizedCoordinates(
@@ -177,6 +237,7 @@ function Canvas() {
 
     const updateElement = (id, x1, y1, x2, y2, type) => {
         const elementsCopy = [...elements];
+
         switch (type) {
             case "line":
             case "rectangle":
@@ -257,7 +318,9 @@ function Canvas() {
                 roughCanvas.draw(element.roughElement);
                 break;
             case "freedraw":
-                const stroke = getSvgPathFromStroke(getStroke(element.points, {size: 5, stroke: "#1A1A1A"}));
+                const stroke = getSvgPathFromStroke(
+                    getStroke(element.points, { size: 5, stroke: "#1A1A1A" })
+                );
                 ctx.fillStyle = "pink";
                 ctx.fill(new Path2D(stroke));
                 break;
