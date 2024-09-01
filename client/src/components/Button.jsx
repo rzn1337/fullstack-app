@@ -1,24 +1,12 @@
-import React from "react";
-
-function Button() {
+function Button({ children = "Button", bgColor = "bg-gray-900", ...props }) {
     return (
-        <a
-            role="link"
-            tabIndex="0"
-            className="
-    flex items-center justify-center 
-    bg-gray-900 text-white 
-    rounded-lg shadow-none cursor-pointer
-    text-sm font-medium 
-    h-8 max-w-full px-1.5 
-    no-underline
-    transform-gpu
-  "
+        <button 
+            className={`relative inline-flex items-center justify-center overflow-hidden px-4 py-2 border border-gray-800 ${bgColor} text-white text-sm font-semibold rounded-full transition-all duration-400 ease-out outline-none hover:border-gray-600 hover:bg-gray-800 whitespace-nowrap`} 
+            {...props}
         >
-            <span className="block text-white overflow-hidden px-1.5 whitespace-nowrap text-ellipsis">
-                Learn
-            </span>
-        </a>
+            {children}
+            <span className="absolute inset-0 bg-radial from-white/25 to-transparent scale-0 transition-transform duration-500 ease-out group-hover:scale-400"></span>
+        </button>
     );
 }
 

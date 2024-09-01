@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
 import Home from "./components/Home.jsx";
+import Layout from "./components/Layout.jsx";
 import "./index.css";
 import {
     createBrowserRouter,
@@ -15,7 +16,8 @@ import Canvas from "./components/Canvas/Canvas.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
-        <Route path="/" element={<Home />}>
+        <Route path="/" element={<Layout />}>
+            <Route path="" element={<Home />} />
             <Route path="canvas" element={<Canvas />} />
             <Route path="register" element={<Signup />} />
             <Route path="login" element={<Login />} />
