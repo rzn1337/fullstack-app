@@ -10,7 +10,7 @@ function Layout() {
         <div>
             {!hideHeader && <Header />}
             <Outlet />
-            <Footer />
+            {/* <Footer /> */}
         </div>
     );
 }

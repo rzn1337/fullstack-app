@@ -10,6 +10,7 @@ function Header() {
     const username = useSelector((state) => state.auth.userData?.username);
     const dispatch = useDispatch();
     useEffect(() => {}, [username]);
+    const isAuthenticated = useSelector((state) => state.auth.status);
     const handleLogout = () => {
         axios
             .post("/api/v1/users/logout")
@@ -36,10 +37,24 @@ function Header() {
                     About
                 </Link>
             </nav>
-            <div className="flex items-center space-x-4">
-                <Button>Log in</Button>
-                <Button>Sign up</Button>
+            {isAuthenticated ? (
+                <div className="flex items-center space-x-4">
+                <h3 className="text-black">{username}</h3>
+                <Link to="/login">
+                    <Button onClick={handleLogout}>Logout</Button>
+                </Link>
             </div>
+            
+            ) : (
+                <div className="flex items-center space-x-4">
+                    <Link to="/login">
+                        <Button>Log in</Button>
+                    </Link>
+                    <Link to="/register">
+                        <Button>Sign up</Button>
+                    </Link>
+                </div>
+            )}
         </header>
     );
 }

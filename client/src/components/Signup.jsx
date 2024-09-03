@@ -1,4 +1,3 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -17,33 +16,75 @@ function Signup() {
 
     return (
         <form onSubmit={handleSubmit(createUser)}>
-            <div className="flex flex-col justify-center items-center h-screen">
-                <input
-                    className="m-2 rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:outline-slate-950 focus:ring-ring focus:border-transparent"
-                    placeholder="Email"
-                    type="text"
-                    {...register("email", { required: true })}
-                />
-                <input
-                    className="m-2 rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:outline-slate-950 focus:ring-ring focus:border-transparent"
-                    placeholder="Username"
-                    type="text"
-                    {...register("username", { required: true })}
-                />
-                <input
-                    className="m-2 rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:outline-slate-950 focus:ring-ring focus:border-transparent"
-                    placeholder="Password"
-                    type="password"
-                    {...register("password", {
-                        required: true,
-                    })}
-                />
-                <button
-                    type="submit"
-                    className="m-2 rounded-md border border-gray-300 text-white bg-black px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:outline-slate-950 focus:ring-ring focus:border-transparent"
-                >
-                    Register
-                </button>
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="w-full max-w-md bg-white shadow-md rounded-lg overflow-hidden">
+                    <div className="px-6 py-4">
+                        <h2 className="text-2xl font-bold mb-2">
+                            Create an Account
+                        </h2>
+                        <p className="text-gray-600 mb-6">
+                            Enter your details below to sign up for our
+                            platform.
+                        </p>
+                        <div className="space-y-4">
+                            <div>
+                                <label
+                                    htmlFor="name"
+                                    className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                    Username
+                                </label>
+                                <input
+                                    id="name"
+                                    type="text"
+                                    placeholder="Enter your name"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    {...register("username", {
+                                        required: true,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="email"
+                                    className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                    Email
+                                </label>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    {...register("email", { required: true })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="password"
+                                    className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                    Password
+                                </label>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Enter a password"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    {...register("password", {
+                                        required: true,
+                                    })}
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full bg-black text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            >
+                                Sign Up
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </form>
     );
