@@ -13,13 +13,13 @@ import {
 import Signup from "./components/Signup.jsx";
 import Login from "./components/Login.jsx";
 import Canvas from "./components/Canvas/Canvas.jsx";
-import Profile from "./pages/Profile.jsx";
+import UserProfile from "./pages/UserProfile.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<Layout />}>
             <Route path="" element={<Home />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile" element={<UserProfile />} />
             <Route path="canvas" element={<Canvas />} />
             <Route path="register" element={<Signup />} />
             <Route path="login" element={<Login />} />

@@ -7,10 +7,14 @@ function Layout() {
     const hideHeader = location.pathname === "/canvas";
 
     return (
-        <div>
-            {!hideHeader && <Header />}
-            <Outlet />
-            {/* <Footer /> */}
+        <div className="min-h-screen flex flex-wrap content-between bg-grey-800">
+            <div className="w-full block">
+                {!hideHeader && <Header />}
+                <main>
+                    <Outlet />
+                </main>
+                <Footer />
+            </div>
         </div>
     );
 }
