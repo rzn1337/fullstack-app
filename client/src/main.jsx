@@ -13,14 +13,14 @@ import {
 import Signup from "./components/Signup.jsx";
 import Login from "./components/Login.jsx";
 import Canvas from "./components/Canvas/Canvas.jsx";
-import UserProfile from "./pages/UserProfile.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 import Loader from "./components/Loader/Loader.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<App />}>
             <Route path="" element={<Home />} />
-            <Route path="profile" element={<UserProfile />} />
+            <Route path="profile" element={<ProfilePage />} />
             <Route path="canvas" element={<Canvas />} />
             <Route path="register" element={<Signup />} />
             <Route path="login" element={<Login />} />

@@ -1,7 +1,7 @@
 import Button from "./Button";
 import { PlusIcon } from "lucide-react";
 
-function ProfileHeader({username = "Null"}) {
+function UserHeader({username = null}) {
     return (
         <header className="bg-background border-b flex items-center justify-between px-6 py-4 shrink-0">
             <div className="flex items-center gap-4">
@@ -20,4 +20,4 @@ function ProfileHeader({username = "Null"}) {
     );
 }
 
-export default ProfileHeader;
+export default UserHeader;
