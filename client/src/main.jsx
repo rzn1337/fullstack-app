@@ -13,7 +13,7 @@ import {
 import Signup from "./components/Signup.jsx";
 import Login from "./components/Login.jsx";
 import Canvas from "./components/Canvas/Canvas.jsx";
-import UserProfile from "./pages/UserProfile.jsx";
+import UserProfile from "./components/UserProfile.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(

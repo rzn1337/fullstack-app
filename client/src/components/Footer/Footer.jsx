@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 
 function Footer() {
     return (
-        <div className="p-20">
-            <footer className="border-t py-6 text-center">
+        <div>
+            <footer className="border-t py-2 text-center">
                 <div className="container mx-auto px-4">
                     <nav className="mb-4 flex justify-center space-x-4">
                         <Link className="text-sm hover:underline" href="#">

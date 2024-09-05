@@ -4,17 +4,16 @@ import Footer from "./Footer/Footer";
 
 function Layout() {
     const location = useLocation();
-    const hideHeader = location.pathname === "/canvas";
+    const hideHeaderPaths = ["/canvas", "/profile"];
+    const hideHeader = hideHeaderPaths.some((path) => path === location.pathname);
 
     return (
-        <div className="min-h-screen flex flex-wrap content-between bg-grey-800">
-            <div className="w-full block">
-                {!hideHeader && <Header />}
-                <main>
-                    <Outlet />
-                </main>
-                <Footer />
-            </div>
+        <div className="min-h-screen flex flex-col bg-grey-800">
+            {!hideHeader && <Header />}
+            <main className="flex-grow">
+                <Outlet />
+            </main>
+            <Footer />
         </div>
     );
 }
