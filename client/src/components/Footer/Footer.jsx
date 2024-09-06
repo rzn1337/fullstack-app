@@ -3,27 +3,17 @@ import { Link } from "react-router-dom";
 function Footer() {
     return (
         <div>
-            <footer className="border-t py-2 text-center">
-                <div className="container mx-auto px-4">
-                    <nav className="mb-4 flex justify-center space-x-4">
-                        <Link className="text-sm hover:underline" href="#">
-                            About
-                        </Link>
-                        <Link className="text-sm hover:underline" href="#">
-                            Terms
-                        </Link>
-                        <Link className="text-sm hover:underline" href="#">
-                            Privacy Policy
-                        </Link>
-                        <Link className="text-sm hover:underline" href="#">
-                            Contact
-                        </Link>
-                    </nav>
-                    <p className="text-sm text-muted-foreground">
-                        © 2024 boardy. All rights reserved.
-                    </p>
-                </div>
-            </footer>
+            <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
+            <p className="text-xs text-muted-foreground">&copy; 2024 Acme Inc. All rights reserved.</p>
+            <nav className="sm:ml-auto flex gap-4 sm:gap-6">
+              <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
+                Terms of Service
+              </Link>
+              <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
+                Privacy
+              </Link>
+            </nav>
+          </footer>
         </div>
     );
 }

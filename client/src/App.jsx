@@ -12,7 +12,7 @@ function App() {
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const location = useLocation();
-    const hideHeaderPaths = ["/canvas", "/profile"];
+    const hideHeaderPaths = ["/canvas", "/profile", "/"];
     const hideHeader = hideHeaderPaths.some(
         (path) => path === location.pathname
     );
@@ -32,7 +32,7 @@ function App() {
         <main className="flex-grow">
             <Outlet />
         </main>
-        <Footer />
+        {/* <Footer /> */}
     </div>) : (<Loader />);
 }
 

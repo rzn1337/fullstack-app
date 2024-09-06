@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
-import Home from "./components/Home.jsx";
+import Landing from "./components/Landing.jsx";
 import App from "./App.jsx";
 import "./index.css";
 import {
@@ -19,7 +19,7 @@ import Loader from "./components/Loader/Loader.jsx";
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<App />}>
-            <Route path="" element={<Home />} />
+            <Route path="" element={<Landing />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="canvas" element={<Canvas />} />
             <Route path="register" element={<Signup />} />
