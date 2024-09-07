@@ -21,6 +21,11 @@ io.on("connection", (socket) => {
     console.log('All connected socket IDs:', allSocketIds);
 
     console.log("client count:", io.engine.clientsCount);
+
+    socket.on("update", (element) => {
+        socket.broadcast.emit("update", element);
+        console.log(element)
+    });
     
     socket.on("disconnect", () => {
         console.log("User disconnected", socket.id);

@@ -196,23 +196,47 @@ function Canvas() {
         const roughCanvas = rough.canvas(canvasRef.current);
 
         // elements.forEach(({ roughElement }) => roughCanvas.draw(roughElement));
-        console.log(elements);
         elements.forEach((element) => drawElement(roughCanvas, ctx, element));
+        if (elements && elements.length > 0) {
+            socket.emit("update", elements);
+        }
+        console.log("actual elements", elements);
     }, [elements]);
 
     useEffect(() => {
         const newSocket = io(import.meta.env.VITE_APP_SOCKET_URL);
         setSocket(newSocket);
 
-        return (() => {
-            socket.disconnect();
-        })
+        return () => {
+            newSocket.disconnect();
+        };
     }, []);
 
     useEffect(() => {
-        if (socket) console.log("socket created: ", socket);
-    }, [socket])
-    
+        if (!socket) return;
+
+        socket.on("update", (elements) => {
+            console.log("Received elements:", elements);
+            console.log("Type of elements:", typeof elements);
+            console.log("Is array:", Array.isArray(elements));
+
+
+            elements.forEach((element) => console.log(element.id, element));
+
+            // setElements(elements)
+
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const roughCanvas = rough.canvas(canvasRef.current);
+
+            elements.forEach((element) =>
+                drawElement(roughCanvas, ctx, element)
+            );
+
+        });
+    }, [socket]);
 
     const drawElement = (roughCanvas, ctx, element) => {
         const { type } = element;
