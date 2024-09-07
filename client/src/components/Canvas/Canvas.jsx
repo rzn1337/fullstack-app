@@ -35,7 +35,6 @@ function Canvas() {
                         : generator.rectangle(x1, y1, x2 - x1, y2 - y1);
                 return { id, x1, y1, x2, y2, type, roughElement };
             case "freedraw":
-                console.log("dodod");
                 return { id, type, points: [{ x: x1, y: y1 }] };
             default:
                 throw new Error(`Unrecognized type ${type}`);
@@ -184,7 +183,6 @@ function Canvas() {
         }
         setAction("none");
         setSelectedElement(null);
-        window.localStorage.setItem("canvas", elements);
     };
 
     useLayoutEffect(() => {
@@ -202,8 +200,21 @@ function Canvas() {
         elements.forEach((element) => drawElement(roughCanvas, ctx, element));
     }, [elements]);
 
+    useEffect(() => {
+        const newSocket = io(import.meta.env.VITE_APP_SOCKET_URL);
+        setSocket(newSocket);
+
+        return (() => {
+            socket.disconnect();
+        })
+    }, []);
+
+    useEffect(() => {
+        if (socket) console.log("socket created: ", socket);
+    }, [socket])
+    
+
     const drawElement = (roughCanvas, ctx, element) => {
-        console.log(element);
         const { type } = element;
         switch (type) {
             case "line":
@@ -212,9 +223,9 @@ function Canvas() {
                 break;
             case "freedraw":
                 const stroke = getSvgPathFromStroke(
-                    getStroke(element.points, { size: 10, stroke: "#1A1A1A" })
+                    getStroke(element.points, { size: 10 })
                 );
-                ctx.fillStyle = "pink";
+                ctx.fillStyle = "black";
                 ctx.fill(new Path2D(stroke));
                 break;
             default:
@@ -237,23 +248,6 @@ function Canvas() {
             document.removeEventListener("keydown", undoRedoFunction);
         };
     }, [undo, redo]);
-
-    useEffect(() => {
-        const newSocket = io(import.meta.env.VITE_APP_SOCKET_URL, {
-            withCredentials: true,
-        });
-        setSocket(newSocket);
-        console.log(newSocket);
-
-        return () => {
-            newSocket.disconnect();
-            setSocket(null);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (!socket) return;
-    }, []);
 
     return (
         <div>
