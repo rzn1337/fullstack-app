@@ -1,26 +1,33 @@
-import { PencilLine, Minus, RectangleHorizontal, Move, Scaling } from "lucide-react";
+import {
+    PencilLine,
+    Minus,
+    RectangleHorizontal,
+    Move,
+    Scaling,
+} from "lucide-react";
 
 function Toolbar({ setTool }) {
     const tools = [
-        { name: "Select", icon: <Move strokeWidth={2}/> },
-        { name: "Rectangle", icon: <RectangleHorizontal strokeWidth={2}/> },
-        { name: "Resize", icon: <Scaling strokeWidth={2}/> },
-        // { name: "Arrow", icon: "→" },
-        { name: "Line", icon: <Minus strokeWidth={2}/> },
-        { name: "Freedraw", icon: <PencilLine strokeWidth={2}/> },
-        
-        // { name: "Text", icon: "T" },
-        // { name: "Image", icon: "🖼" },
-        // { name: "Eraser", icon: "⌫" },
+        { name: "Select", icon: <Move strokeWidth={2} color="black" /> },
+        {
+            name: "Rectangle",
+            icon: <RectangleHorizontal strokeWidth={2} color="black" />,
+        },
+        { name: "Line", icon: <Minus strokeWidth={2} color="black" /> },
+        {
+            name: "Freedraw",
+            icon: <PencilLine strokeWidth={2} color="black" />,
+        },
     ];
+
     return (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-slate-900 rounded-xl shadow-md">
-            <div className="flex p-1">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white backdrop-blur-lg rounded-lg shadow-lg p-1">
+            <div className="flex gap-2">
                 {tools.map((tool) => (
                     <button
                         key={tool.name}
                         onClick={() => setTool(tool.name.toLowerCase())}
-                        className={`w-9 h-9 flex items-center justify-center rounded-md mx-0.5 text-white hover:bg-gray-100 `}
+                        className={`w-10 h-10 flex items-center justify-center rounded-full bg-white text-white hover:bg-slate-800 transition-colors duration-300 transform hover:scale-110 active:scale-95`}
                         title={tool.name}
                     >
                         {tool.icon}

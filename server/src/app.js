@@ -1,8 +1,26 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 const app = express();
+const httpServer = createServer(app);
+
+const io = new Server(httpServer, {
+    cors: {
+        origin: process.env.CORS_ORIGIN,
+        credentials: true,
+    },
+});
+
+io.on("connection", (socket) => {
+    console.log("A user connected", socket.id);
+
+    socket.on("disconnect", () => {
+        console.log("User disconnected", socket.id);
+    });
+});
 
 app.use(
     cors({
@@ -22,4 +40,4 @@ import userRouter from "./routes/user.routes.js";
 
 app.use("/api/v1/users", userRouter);
 
-export { app };
+export { httpServer as app };

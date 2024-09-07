@@ -12,8 +12,10 @@ import {
     resizedCoordinates,
     adjustElementCoordinates,
 } from "./utils";
+import { io } from "socket.io-client";
 
 function Canvas() {
+    const [socket, setSocket] = useState(null);
     const generator = rough.generator({ stroke: "green" });
 
     const [elements, setElements, undo, redo] = useHistory([]);
@@ -235,6 +237,23 @@ function Canvas() {
             document.removeEventListener("keydown", undoRedoFunction);
         };
     }, [undo, redo]);
+
+    useEffect(() => {
+        const newSocket = io(import.meta.env.VITE_APP_SOCKET_URL, {
+            withCredentials: true,
+        });
+        setSocket(newSocket);
+        console.log(newSocket);
+
+        return () => {
+            newSocket.disconnect();
+            setSocket(null);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!socket) return;
+    }, []);
 
     return (
         <div>
