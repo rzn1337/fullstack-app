@@ -1,7 +1,15 @@
 import { Link } from "react-router-dom";
 import CanvasPreview from "./CanvasPreview";
+import Button from "./Button";
+import { PlusIcon } from "lucide-react";
+import axios from "axios";
 
 function UserProfile() {
+
+    const createCanvas = () => {
+        axios.post("/api/v1/create-canvas", {title: "Board"})
+    }
+
     return (
         <div className="flex flex-col h-full">
             <main className="flex-1 bg-muted/40 p-6 grid gap-6 overflow-auto">
@@ -14,6 +22,10 @@ function UserProfile() {
                     </Link>
                 </div>
             </main>
+            <Button onClick={createCanvas}>
+                <PlusIcon className="h-5 w-5" />
+                <span className="sr-only">Create new whiteboard</span>
+            </Button>
         </div>
     );
 }

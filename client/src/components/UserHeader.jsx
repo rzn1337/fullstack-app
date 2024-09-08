@@ -1,6 +1,3 @@
-import Button from "./Button";
-import { PlusIcon } from "lucide-react";
-
 function UserHeader({username = null}) {
     return (
         <header className="bg-background border-b flex items-center justify-between px-6 py-4 shrink-0">
@@ -12,10 +9,6 @@ function UserHeader({username = null}) {
                     </div>
                 </div>
             </div>
-            <Button>
-                <PlusIcon className="h-5 w-5" />
-                <span className="sr-only">Create new whiteboard</span>
-            </Button>
         </header>
     );
 }

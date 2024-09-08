@@ -146,6 +146,8 @@ const getCurrentUser = asyncHandler(async (req, res, next) => {
         return new ApiError(404, "User not found");
     }
 
+    console.log("user fetched", user)
+
     return res
         .status(200)
         .json(

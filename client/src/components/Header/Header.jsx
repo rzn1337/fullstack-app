@@ -14,7 +14,7 @@ function Header() {
     const handleLogout = () => {
         axios
             .post("/api/v1/users/logout")
-            .then(dispatch(logoutUser()))
+            .then(() => dispatch(logoutUser()))
             .catch((error) => console.log(error));
     };
     return (

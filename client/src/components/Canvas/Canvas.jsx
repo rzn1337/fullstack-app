@@ -4,6 +4,7 @@ import Toolbar from "../Toolbar/Toolbar";
 import BottomToolbar from "../BottomToolbar/BottomToolbar";
 import useHistory from "../../hooks/useHistory";
 import getStroke from "perfect-freehand";
+import axios from "axios";
 import {
     cursorForPosition,
     getSvgPathFromStroke,
@@ -13,6 +14,7 @@ import {
     adjustElementCoordinates,
 } from "./utils";
 import { io } from "socket.io-client";
+import Button from "../Button";
 
 function Canvas() {
     const [socket, setSocket] = useState(null);
@@ -275,6 +277,7 @@ function Canvas() {
 
     return (
         <div>
+            {/* <Button onClick={saveCanvas}>Save</Button> */}
             <Toolbar setTool={setTool} />
             <canvas
                 ref={canvasRef}
