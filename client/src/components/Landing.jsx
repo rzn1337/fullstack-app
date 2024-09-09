@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function Landing() {
     return (
-        <div className="flex flex-col min-h-screen overflow-hidden">
+        <div className="flex flex-col min-h-screen overflow-hidden bg-gradient-to-r from-white to-gray-600">
             <header className="px-4 lg:px-6 h-14 flex items-center">
                 <Link
                     href="#"
@@ -62,16 +62,16 @@ function Landing() {
                             </div>
                             <div className="flex flex-col gap-2 min-[400px]:flex-row">
                                 <Link
-                                    href="#"
+                                    to="/register"
                                     className="bg-black text-white inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                                 >
                                     Sign Up
                                 </Link>
                                 <Link
-                                    href="#"
+                                    to="/login"
                                     className=" inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                                 >
-                                    Try It Now
+                                    Login
                                 </Link>
                             </div>
                         </div>
@@ -79,18 +79,28 @@ function Landing() {
                 </section>
             </main>
             <div>
-            <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-            <p className="text-xs text-muted-foreground">&copy; 2024 boardy. All rights reserved.</p>
-            <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-              <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
-                Terms of Service
-              </Link>
-              <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
-                Privacy
-              </Link>
-            </nav>
-          </footer>
-        </div>
+                <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
+                    <p className="text-xs text-muted-foreground">
+                        &copy; 2024 boardy. All rights reserved.
+                    </p>
+                    <nav className="sm:ml-auto flex gap-4 sm:gap-6">
+                        <Link
+                            href="#"
+                            className="text-xs hover:underline underline-offset-4"
+                            prefetch={false}
+                        >
+                            Terms of Service
+                        </Link>
+                        <Link
+                            href="#"
+                            className="text-xs hover:underline underline-offset-4"
+                            prefetch={false}
+                        >
+                            Privacy
+                        </Link>
+                    </nav>
+                </footer>
+            </div>
         </div>
     );
 }
