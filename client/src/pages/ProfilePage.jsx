@@ -14,10 +14,10 @@ function ProfilePage() {
     useEffect(() => {
         const fetchCanvases = async () => {
             if (userDataFromRedux) setUserData(userDataFromRedux);
-            console.log("userdata:", userData)
+            console.log("userdata:", userDataFromRedux)
             try {
                 const canvases = await axios.get(
-                    `/api/v1/canvas/canvases/${userData.payload._id}`
+                    `/api/v1/canvas/canvases/${userData?.username}`
                 );
             } catch (error) {
                 console.log(error);

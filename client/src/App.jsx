@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { loginUser, logoutUser } from "./store/authSlice";
-import Loader from "./components/Loader/Loader"
+import Loader from "./components/Loader/Loader";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -18,22 +18,30 @@ function App() {
     );
 
     useEffect(() => {
-        axios.get("/api/v1/users/get-current-user").then((response) => {
-            if (response.data.data.user) {
-                dispatch(loginUser(response.data.data.user));
-            } else {
-                dispatch(logoutUser())
-            }
-        }).catch(error => console.log("User has not logged in yet", error)).finally(setLoading(false));
+        axios
+            .get("/api/v1/users/get-current-user")
+            .then((response) => {
+                if (response.data.data.user) {
+                    dispatch(loginUser(response.data.data.user));
+                } else {
+                    dispatch(logoutUser());
+                }
+            })
+            .catch((error) => console.log("User has not logged in yet", error))
+            .finally(setLoading(false));
     }, []);
 
-    return !loading ? (<div className="min-h-screen flex flex-col bg-grey-800">
-        {!hideHeader && <Header />}
-        <main className="flex-grow">
-            <Outlet />
-        </main>
-        {/* <Footer /> */}
-    </div>) : (<Loader />);
+    return !loading ? (
+        <div className="min-h-screen flex flex-col bg-grey-800">
+            {!hideHeader && <Header />}
+            <main className="flex-grow">
+                <Outlet />
+            </main>
+            {/* <Footer /> */}
+        </div>
+    ) : (
+        <Loader />
+    );
 }
 
 export default App;

@@ -15,13 +15,28 @@ import Login from "./components/Login.jsx";
 import Canvas from "./components/Canvas/Canvas.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import Loader from "./components/Loader/Loader.jsx";
+import AuthLayout from "./components/AuthLayout.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<App />}>
-            <Route path="" element={<Landing />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="canvas" element={<Canvas />} />
+            <Route
+                path=""
+                element={
+                    <AuthLayout authentication={false}>
+                        <Landing />
+                    </AuthLayout>
+                }
+            />
+            <Route path="profile" element={<AuthLayout authentication={true}><ProfilePage /></AuthLayout>} />
+            <Route
+                path="canvas"
+                element={
+                    <AuthLayout authentication={true}>
+                        <Canvas />
+                    </AuthLayout>
+                }
+            />
             <Route path="register" element={<Signup />} />
             <Route path="login" element={<Login />} />
             <Route path="loader" element={<Loader />} />
