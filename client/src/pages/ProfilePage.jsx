@@ -3,19 +3,37 @@ import UserHeader from "../components/UserHeader";
 import { useState, useEffect } from "react";
 import Loader from "../components/Loader/Loader";
 import UserProfile from "../components/UserProfile";
+import axios from "axios";
 
 function ProfilePage() {
     const [loading, setLoading] = useState(true);
-    const username = useSelector((state) => state.auth.userData?.username);
+    const userDataFromRedux = useSelector((state) => state.auth.userData);
+    const [userData, setUserData] = useState(null);
+    const [canvases, setCanvases] = useState(null);
 
     useEffect(() => {
+        const fetchCanvases = async () => {
+            if (userDataFromRedux) setUserData(userDataFromRedux);
+            console.log("userdata:", userData)
+            try {
+                const canvases = await axios.get(
+                    `/api/v1/canvas/canvases/${userData.payload._id}`
+                );
+            } catch (error) {
+                console.log(error);
+            }
+            setCanvases(canvases);
+        };
+
+        fetchCanvases();
+
         setLoading(false);
-    }, [username]);
+    }, [userDataFromRedux]);
 
     return !loading ? (
         <div>
-            <UserHeader username={username} />
-            <UserProfile />
+            <UserHeader username={userData.username} />
+            <UserProfile canvases={canvases} />
         </div>
     ) : (
         <Loader />

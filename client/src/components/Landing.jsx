@@ -7,7 +7,7 @@ function Landing() {
         <div className="flex flex-col min-h-screen overflow-hidden bg-gradient-to-r from-white to-gray-600">
             <header className="px-4 lg:px-6 h-14 flex items-center">
                 <Link
-                    href="#"
+                    href="/"
                     className="flex items-center justify-center"
                     prefetch={false}
                 >

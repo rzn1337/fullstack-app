@@ -1,4 +1,5 @@
 import { Canvas } from "../models/canvas.model.js";
+import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -9,11 +10,11 @@ const createCanvas = asyncHandler(async (req, res, next) => {
     const { title } = req.body;
 
     if (!user) {
-        return new ApiError(404, "User not found");
+        throw new ApiError(404, "User not found");
     }
 
     if (!title) {
-        return new ApiError(404, "Title is a required field");
+        throw new ApiError(404, "Title is a required field");
     }
 
     console.log("THISSSSSSSSSSSSSSSSSSSS");
@@ -33,4 +34,58 @@ const createCanvas = asyncHandler(async (req, res, next) => {
     );
 });
 
-export { createCanvas };
+const getUserCanvases = asyncHandler(async (req, res, next) => {
+    const { username } = req.params;
+
+    console.log(req.params)
+
+    // if (!username?.trim()) {
+    //     throw new ApiError(404, "Username not found");
+    // }
+
+    const userCanvases = await User.aggregate([
+        {
+            $match: {
+                username: username?.trim(),
+            },
+        },
+        {
+            $lookup: {
+                from: "canvas",
+                localField: "_id",
+                foreignField: "owner",
+                as: "canvases",
+            },
+        },
+        {
+            $addFields: {
+                canvas_count: {
+                    $size: "$canvases",
+                },
+            },
+        },
+        {
+            $project: {
+                canvases: 1,
+                canvas_count: 1,
+            }
+        },
+    ]);
+
+    console.log(userCanvases)
+
+    if (!userCanvases?.length) {
+        throw new ApiError(
+            404,
+            "Something went wrong while retrieving canvases"
+        );
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, userCanvases, "canvases fetched successfully")
+        );
+});
+
+export { createCanvas, getUserCanvases };

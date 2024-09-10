@@ -3,12 +3,18 @@ import CanvasPreview from "./CanvasPreview";
 import Button from "./Button";
 import { PlusIcon } from "lucide-react";
 import axios from "axios";
+import { useEffect } from "react";
 
-function UserProfile() {
-
+function UserProfile({ canvases }) {
     const createCanvas = () => {
-        axios.post("/api/v1/create-canvas", {title: "Board"})
-    }
+        axios
+            .post("/api/v1/canvas/create-canvas", { title: "Board" })
+            .then(() => console.log("canvas created"));
+    };
+
+    useEffect(() => {
+        console.log(canvases);
+    });
 
     return (
         <div className="flex flex-col h-full">
