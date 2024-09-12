@@ -5,6 +5,6 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.route("/create-canvas").post(verifyJWT, createCanvas);
-router.route("/canvases/:username").get(getUserCanvases);
+router.route("/canvases/:username").get(verifyJWT, getUserCanvases);
 
 export default router;

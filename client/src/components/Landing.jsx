@@ -6,11 +6,7 @@ function Landing() {
     return (
         <div className="flex flex-col min-h-screen overflow-hidden bg-gradient-to-r from-white to-gray-600">
             <header className="px-4 lg:px-6 h-14 flex items-center">
-                <Link
-                    href="/"
-                    className="flex items-center justify-center"
-                    prefetch={false}
-                >
+                <Link href="/" className="flex items-center justify-center">
                     <Signature className="h-6 w-6" />
                     <span className="text-lg font-bold">boardy.</span>
                 </Link>
@@ -18,28 +14,24 @@ function Landing() {
                     <Link
                         href="#"
                         className="text-sm font-medium hover:underline underline-offset-4"
-                        prefetch={false}
                     >
                         Features
                     </Link>
                     <Link
                         href="#"
                         className="text-sm font-medium hover:underline underline-offset-4"
-                        prefetch={false}
                     >
                         Pricing
                     </Link>
                     <Link
                         href="#"
                         className="text-sm font-medium hover:underline underline-offset-4"
-                        prefetch={false}
                     >
                         About
                     </Link>
                     <Link
                         href="#"
                         className="text-sm font-medium hover:underline underline-offset-4"
-                        prefetch={false}
                     >
                         Contact
                     </Link>
@@ -87,14 +79,12 @@ function Landing() {
                         <Link
                             href="#"
                             className="text-xs hover:underline underline-offset-4"
-                            prefetch={false}
                         >
                             Terms of Service
                         </Link>
                         <Link
                             href="#"
                             className="text-xs hover:underline underline-offset-4"
-                            prefetch={false}
                         >
                             Privacy
                         </Link>

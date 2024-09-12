@@ -7,6 +7,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { loginUser, logoutUser } from "./store/authSlice";
 import Loader from "./components/Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -16,19 +17,29 @@ function App() {
     const hideHeader = hideHeaderPaths.some(
         (path) => path === location.pathname
     );
+    const navigate = useNavigate();
 
     useEffect(() => {
-        axios
-            .get("/api/v1/users/get-current-user")
-            .then((response) => {
+        const getCurrentUser = async () => {
+            try {
+                const response = await axios.get(
+                    "/api/v1/users/get-current-user"
+                );
                 if (response.data.data.user) {
+                    console.log("get current user", response.data.data);
                     dispatch(loginUser(response.data.data.user));
+                    navigate("/profile");
                 } else {
                     dispatch(logoutUser());
                 }
-            })
-            .catch((error) => console.log("User has not logged in yet", error))
-            .finally(setLoading(false));
+            } catch (error) {
+                console.log("error::", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getCurrentUser();
     }, []);
 
     return !loading ? (

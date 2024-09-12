@@ -8,15 +8,9 @@ import { Signature } from "lucide-react";
 
 function Header() {
     const username = useSelector((state) => state.auth.userData?.username);
-    const dispatch = useDispatch();
     useEffect(() => {}, [username]);
     const isAuthenticated = useSelector((state) => state.auth.status);
-    const handleLogout = () => {
-        axios
-            .post("/api/v1/users/logout")
-            .then(() => dispatch(logoutUser()))
-            .catch((error) => console.log(error));
-    };
+    
     return (
         <header className="flex h-16 items-center justify-between border-b px-6">
             <div className="flex items-center space-x-4">
@@ -40,9 +34,6 @@ function Header() {
             {isAuthenticated ? (
                 <div className="flex items-center space-x-4">
                 <h3 className="text-black">{username}</h3>
-                <Link to="/login">
-                    <Button onClick={handleLogout}>Logout</Button>
-                </Link>
             </div>
             
             ) : (
