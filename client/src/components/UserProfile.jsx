@@ -1,21 +1,25 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CanvasPreview from "./CanvasPreview";
 import Button from "./Button";
 import { PlusIcon } from "lucide-react";
 import axios from "axios";
-import { useEffect } from "react";
 
 function UserProfile({ canvases }) {
+    const navigate = useNavigate();
     const createCanvas = () => {
         axios
             .post("/api/v1/canvas/create-canvas", { title: "Board" })
             .then(() => console.log("canvas created"));
     };
 
-    const handleClick = async (id) => {
+    const handleClick = (id) => {
         console.log("id", id);
-        const response = await axios.get(`/api/v1/canvas/${id}`);
-        console.log(response);
+        axios
+            .get(`/api/v1/canvas/${id}`)
+            .then(() => {
+                navigate(`/canvas/${id}`);
+            })
+            .catch((error) => console.log(error));
     };
 
     return (

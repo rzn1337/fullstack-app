@@ -30,7 +30,7 @@ const router = createBrowserRouter(
             />
             <Route path="profile" element={<AuthLayout authentication={true}><ProfilePage /></AuthLayout>} />
             <Route
-                path="canvas"
+                path="canvas/:id"
                 element={
                     <AuthLayout authentication={true}>
                         <Canvas />

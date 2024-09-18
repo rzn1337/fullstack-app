@@ -15,11 +15,12 @@ function App() {
     const location = useLocation();
     const hideHeaderPaths = ["/canvas", "/profile", "/"];
     const hideHeader = hideHeaderPaths.some(
-        (path) => path === location.pathname
+        (path) => location.pathname.substring(path)
     );
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log(location.pathname)
         const getCurrentUser = async () => {
             try {
                 const response = await axios.get(
