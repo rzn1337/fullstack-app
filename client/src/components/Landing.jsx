@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function Landing() {
     return (
-        <div className="flex flex-col min-h-screen overflow-hidden bg-gradient-to-r from-white to-gray-600">
+        <div className="flex flex-col min-h-screen overflow-hidden bg-white">
             <header className="px-4 lg:px-6 h-14 flex items-center">
                 <Link href="/" className="flex items-center justify-center">
                     <Signature className="h-6 w-6" />

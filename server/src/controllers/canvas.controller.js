@@ -37,7 +37,7 @@ const createCanvas = asyncHandler(async (req, res, next) => {
 const getUserCanvases = asyncHandler(async (req, res, next) => {
     const { username } = req.params;
 
-    console.log(req.params)
+    console.log(req.params);
 
     // if (!username?.trim()) {
     //     throw new ApiError(404, "Username not found");
@@ -68,11 +68,11 @@ const getUserCanvases = asyncHandler(async (req, res, next) => {
             $project: {
                 canvases: 1,
                 canvas_count: 1,
-            }
+            },
         },
     ]);
 
-    console.log(userCanvases)
+    console.log(userCanvases);
 
     if (!userCanvases?.length) {
         throw new ApiError(
@@ -88,4 +88,35 @@ const getUserCanvases = asyncHandler(async (req, res, next) => {
         );
 });
 
-export { createCanvas, getUserCanvases };
+const getUserCanvas = asyncHandler(async (req, res, next) => {
+    /* canvas id received in req body 
+    check if the canvas id exists, 
+    if not return if yes, 
+    check if the canvas belongs to the user, 
+    if no, return unauth 401, 
+    if yes return canvas; */
+
+    const { id } = req.params;
+    const { user } = req;
+
+        console.log("canvasid: ", id)
+
+    if (!id) {
+        throw new ApiError(404, "Canvas not found");
+    }
+
+    const canvas = await Canvas.findById(id);
+
+    console.log(canvas.owner);
+    console.log(user._id);
+
+    // if (canvas.owner !== user._id) {
+    //     throw new ApiError(401, "Unauthorized request");
+    // }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, canvas, "Canvas fetched successfully"));
+});
+
+export { createCanvas, getUserCanvases, getUserCanvas };

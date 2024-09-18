@@ -1,8 +1,8 @@
 import React from "react";
 
-function CanvasPreview({title, lastUpdated = "unknown"}) {
+function CanvasPreview({title, lastUpdated = "unknown", onClick}) {
     return (
-        <div className="overflow-hidden bg-white rounded-lg shadow-md">
+        <div className="overflow-hidden bg-white rounded-lg shadow-md" onClick={onClick}>
             <div className="p-0">
                 <img
                     src="/placeholder.svg"
