@@ -12,10 +12,11 @@ import {
 } from "react-router-dom";
 import Signup from "./components/Signup.jsx";
 import Login from "./components/Login.jsx";
-import Canvas from "./components/Canvas/Canvas.jsx";
+// import Canvas from "./components/Canvas/Canvas.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import Loader from "./components/Loader/Loader.jsx";
 import AuthLayout from "./components/AuthLayout.jsx";
+import Canvas from "./pages/Canvas.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
