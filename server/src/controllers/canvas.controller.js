@@ -122,7 +122,38 @@ const getUserCanvas = asyncHandler(async (req, res, _) => {
 const saveUserCanvas = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const { history, index } = req.body;
-    
+
+    if (!id) {
+        throw new ApiError(404, "Canvas not found");
+    }
+
+    if (!history || !index) {
+        throw new ApiError(404, "History and index fields are required");
+    }
+
+    const updatedCanvas = await Canvas.findByIdAndUpdate(
+        id,
+        {
+            $set: {
+                history,
+                index,
+            },
+        },
+        { new: true }
+    );
+
+    if (!updatedCanvas) {
+        throw new ApiError(
+            500,
+            "Something went wrong while updating the canvas"
+        );
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, updatedCanvas, "Canvas updated successfully")
+        );
 });
 
 export { createCanvas, getUserCanvases, getUserCanvas, saveUserCanvas };

@@ -15,7 +15,7 @@ function UserProfile({ canvases }) {
     const handleClick = (id) => {
         console.log("id", id);
         axios
-            .get(`/api/v1/canvas/${id}`)
+            .get(`/api/v1/get-canvas/${id}`)
             .then(() => {
                 navigate(`/canvas/${id}`);
             })

@@ -6,7 +6,7 @@ const router = Router();
 
 router.route("/create-canvas").post(verifyJWT, createCanvas);
 router.route("/canvases/:username").get(verifyJWT, getUserCanvases);
-router.route("/:id").get(verifyJWT, getUserCanvas);
-router.route("/:id").get(verifyJWT, saveUserCanvas);
+router.route("/get-canvas/:id").get(verifyJWT, getUserCanvas);
+router.route("/update-canvas/:id").patch(verifyJWT, saveUserCanvas);
 
 export default router;
