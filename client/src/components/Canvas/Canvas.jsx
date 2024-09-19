@@ -277,7 +277,7 @@ function Canvas() {
     }, [undo, redo]);
 
     return (
-        <div>
+        <div className="w-full h-full bg-dots-pattern bg-dots-size text-gray-300">
             {/* <Button onClick={saveCanvas}>Save</Button> */}
             <Toolbar setTool={setTool} />
             <div className="fixed top-2 left-10 transform -translate-x-1/2 bg-black backdrop-blur-lg rounded-lg shadow-lg">
