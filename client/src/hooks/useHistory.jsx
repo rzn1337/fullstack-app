@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import { useState } from "react";
 
 const useHistory = (initState) => {
     const [index, setIndex] = useState(0);
@@ -10,9 +10,12 @@ const useHistory = (initState) => {
         if (overwrite) {
             const historyCopy = [...history];
             historyCopy[index] = newState;
+            console.log("historyCopy: ", historyCopy);
             setHistory(historyCopy);
         } else {
             const updatedState = [...history].slice(0, index + 1);
+            console.log("history: ", [...updatedState, newState]);
+            console.log("index: ", index + 1);
             setHistory([...updatedState, newState]);
             setIndex((index) => index + 1);
         }
@@ -28,4 +31,4 @@ const useHistory = (initState) => {
     return [history[index], setState, undo, redo];
 };
 
-export default useHistory
+export default useHistory;

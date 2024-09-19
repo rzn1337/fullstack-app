@@ -4,7 +4,6 @@ import Toolbar from "../Toolbar/Toolbar";
 import BottomToolbar from "../BottomToolbar/BottomToolbar";
 import useHistory from "../../hooks/useHistory";
 import getStroke from "perfect-freehand";
-import axios from "axios";
 import {
     cursorForPosition,
     getSvgPathFromStroke,
@@ -15,6 +14,7 @@ import {
 } from "./utils";
 import { io } from "socket.io-client";
 import Button from "../Button";
+import { Save } from "lucide-react";
 
 function Canvas() {
     const [socket, setSocket] = useState(null);
@@ -187,6 +187,10 @@ function Canvas() {
         setSelectedElement(null);
     };
 
+    useEffect(() => {
+        
+    }, []);
+
     useLayoutEffect(() => {
         // const canvas = document.getElementById("canvas");
         const canvas = canvasRef.current;
@@ -222,7 +226,6 @@ function Canvas() {
             console.log("Type of elements:", typeof elements);
             console.log("Is array:", Array.isArray(elements));
 
-
             elements.forEach((element) => console.log(element.id, element));
 
             // setElements(elements)
@@ -236,7 +239,6 @@ function Canvas() {
             elements.forEach((element) =>
                 drawElement(roughCanvas, ctx, element)
             );
-
         });
     }, [socket]);
 
@@ -279,6 +281,9 @@ function Canvas() {
         <div>
             {/* <Button onClick={saveCanvas}>Save</Button> */}
             <Toolbar setTool={setTool} />
+            <Button>
+                <Save />
+            </Button>
             <canvas
                 ref={canvasRef}
                 id="canvas"
