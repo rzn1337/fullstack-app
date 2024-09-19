@@ -20,7 +20,7 @@ function Canvas() {
     const [socket, setSocket] = useState(null);
     const generator = rough.generator({ stroke: "green" });
 
-    const [elements, setElements, undo, redo] = useHistory([]);
+    const [elements, setElements, undo, redo, updateState] = useHistory([]);
 
     const [action, setAction] = useState("none"); // only tracks mouse when action is true
     const [tool, setTool] = useState("line");
@@ -185,11 +185,10 @@ function Canvas() {
         }
         setAction("none");
         setSelectedElement(null);
+        updateState()
     };
 
-    useEffect(() => {
-        
-    }, []);
+    useEffect(() => {}, []);
 
     useLayoutEffect(() => {
         // const canvas = document.getElementById("canvas");
@@ -281,9 +280,11 @@ function Canvas() {
         <div>
             {/* <Button onClick={saveCanvas}>Save</Button> */}
             <Toolbar setTool={setTool} />
-            <Button>
-                <Save />
-            </Button>
+            <div className="fixed top-2 left-10 transform -translate-x-1/2 bg-black backdrop-blur-lg rounded-lg shadow-lg">
+                <Button>
+                    <Save />
+                </Button>
+            </div>
             <canvas
                 ref={canvasRef}
                 id="canvas"

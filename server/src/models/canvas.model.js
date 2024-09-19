@@ -14,6 +14,10 @@ const canvasSchema = new Schema(
             type: String,
             default: "{[]}",
         },
+        index: {
+            type: Number,
+            default: 0,
+        },
     },
     { timestamps: true }
 );

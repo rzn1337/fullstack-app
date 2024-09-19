@@ -88,7 +88,7 @@ const getUserCanvases = asyncHandler(async (req, res, next) => {
         );
 });
 
-const getUserCanvas = asyncHandler(async (req, res, next) => {
+const getUserCanvas = asyncHandler(async (req, res, _) => {
     /* canvas id received in req body 
     check if the canvas id exists, 
     if not return if yes, 
@@ -99,7 +99,7 @@ const getUserCanvas = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const { user } = req;
 
-        console.log("canvasid: ", id)
+    console.log("canvasid: ", id);
 
     if (!id) {
         throw new ApiError(404, "Canvas not found");
@@ -119,4 +119,10 @@ const getUserCanvas = asyncHandler(async (req, res, next) => {
         .json(new ApiResponse(200, canvas, "Canvas fetched successfully"));
 });
 
-export { createCanvas, getUserCanvases, getUserCanvas };
+const saveUserCanvas = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { history, index } = req.body;
+    
+});
+
+export { createCanvas, getUserCanvases, getUserCanvas, saveUserCanvas };
