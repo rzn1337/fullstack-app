@@ -119,7 +119,7 @@ const getUserCanvas = asyncHandler(async (req, res, _) => {
         .json(new ApiResponse(200, canvas, "Canvas fetched successfully"));
 });
 
-const saveUserCanvas = asyncHandler(async (req, res, next) => {
+const updateUserCanvas = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const { history, index } = req.body;
 
@@ -156,4 +156,4 @@ const saveUserCanvas = asyncHandler(async (req, res, next) => {
         );
 });
 
-export { createCanvas, getUserCanvases, getUserCanvas, saveUserCanvas };
+export { createCanvas, getUserCanvases, getUserCanvas, updateUserCanvas };
