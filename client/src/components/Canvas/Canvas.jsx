@@ -15,10 +15,17 @@ import {
 import { io } from "socket.io-client";
 import Button from "../Button";
 import { Save } from "lucide-react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { unsetID } from "../../store/canvasSlice";
 
 function Canvas() {
+    const dispatch = useDispatch();
     const [socket, setSocket] = useState(null);
     const generator = rough.generator({ stroke: "green" });
+
+    const canvas = useSelector((state) => state.canvas);
 
     const [elements, setElements, undo, redo, updateState] = useHistory([]);
 
@@ -185,7 +192,7 @@ function Canvas() {
         }
         setAction("none");
         setSelectedElement(null);
-        updateState()
+        updateState();
     };
 
     useEffect(() => {}, []);
@@ -214,6 +221,7 @@ function Canvas() {
 
         return () => {
             newSocket.disconnect();
+            dispatch(unsetID());
         };
     }, []);
 
@@ -276,12 +284,23 @@ function Canvas() {
         };
     }, [undo, redo]);
 
+    const save = () => {
+        console.log(canvas);
+        axios
+            .patch(`/api/v1/canvas/update-canvas/${canvas.id}`, {
+                history: JSON.stringify(canvas.history),
+                index: canvas.index,
+            })
+            .then(() => console.log("canvas saved"))
+            .catch((err) => console.log(err));
+    };
+
     return (
         <div className="w-full h-full bg-dots-pattern bg-dots-size text-gray-300">
             {/* <Button onClick={saveCanvas}>Save</Button> */}
             <Toolbar setTool={setTool} />
             <div className="fixed top-2 left-10 transform -translate-x-1/2 bg-black backdrop-blur-lg rounded-lg shadow-lg">
-                <Button>
+                <Button onClick={save}>
                     <Save />
                 </Button>
             </div>

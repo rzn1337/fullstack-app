@@ -3,8 +3,11 @@ import CanvasPreview from "./CanvasPreview";
 import Button from "./Button";
 import { PlusIcon } from "lucide-react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setID } from "../store/canvasSlice"
 
 function UserProfile({ canvases }) {
+    const dispatch = useDispatch()
     const navigate = useNavigate();
     const createCanvas = () => {
         axios
@@ -15,8 +18,9 @@ function UserProfile({ canvases }) {
     const handleClick = (id) => {
         console.log("id", id);
         axios
-            .get(`/api/v1/get-canvas/${id}`)
+            .get(`/api/v1/canvas/get-canvas/${id}`)
             .then(() => {
+                dispatch(setID({id}))
                 navigate(`/canvas/${id}`);
             })
             .catch((error) => console.log(error));

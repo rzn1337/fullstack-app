@@ -1,4 +1,3 @@
-import React from 'react'
 import CanvasComponent from "../components/Canvas/Canvas"
 
 function Canvas() {
