@@ -88,6 +88,8 @@ const getUserCanvases = asyncHandler(async (req, res, next) => {
         );
 });
 
+
+// TODO: This
 const getUserCanvas = asyncHandler(async (req, res, _) => {
     /* canvas id received in req body 
     check if the canvas id exists, 
@@ -107,7 +109,7 @@ const getUserCanvas = asyncHandler(async (req, res, _) => {
 
     const canvas = await Canvas.findById(id);
 
-    console.log(canvas.owner);
+    console.log(canvas?.owner);
     console.log(user._id);
 
     // if (canvas.owner !== user._id) {

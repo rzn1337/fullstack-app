@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CanvasPreview from "./CanvasPreview";
 import Button from "./Button";
 import { PlusIcon } from "lucide-react";
