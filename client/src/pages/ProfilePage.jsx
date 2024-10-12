@@ -26,7 +26,7 @@ function ProfilePage() {
             }
         };
         if (username) fetchCanvases();
-    }, []);
+    }, [setCanvases]);
 
     return !loading ? (
         <div>

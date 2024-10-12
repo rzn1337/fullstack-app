@@ -1,8 +1,17 @@
 import React from "react";
+import { formatDistanceToNow } from "date-fns";
 
-function CanvasPreview({title, lastUpdated = "unknown", onClick}) {
+function CanvasPreview({ title, lastUpdated = "unknown", onClick }) {
+    const lastUpdatedText =
+        lastUpdated !== "unknown"
+            ? `${formatDistanceToNow(new Date(lastUpdated), { addSuffix: true })}`
+            : lastUpdated;
+
     return (
-        <div className="overflow-hidden bg-white rounded-lg shadow-md" onClick={onClick}>
+        <div
+            className="overflow-hidden bg-white rounded-lg shadow-md"
+            onClick={onClick}
+        >
             <div className="p-0">
                 <img
                     src="/placeholder.svg"
@@ -17,7 +26,7 @@ function CanvasPreview({title, lastUpdated = "unknown", onClick}) {
                     <div className="grid gap-0.5">
                         <div className="font-medium">{title}</div>
                         <div className="text-sm text-gray-500">
-                            {`Last updated: ${lastUpdated}`}
+                            {`Last updated: ${lastUpdatedText}`}
                         </div>
                     </div>
                     <button className="bg-transparent hover:bg-gray-200 p-1 rounded-full">
