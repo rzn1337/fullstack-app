@@ -26,12 +26,12 @@ function ProfilePage() {
             }
         };
         if (username) fetchCanvases();
-    }, [setCanvases]);
+    }, []);
 
     return !loading ? (
         <div>
             <UserHeader username={username} />
-            <UserProfile canvases={canvases} />
+            <UserProfile canvases={canvases} setCanvases={setCanvases} />
         </div>
     ) : (
         <Loader />

@@ -7,13 +7,16 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { setID } from "../store/canvasSlice";
 
-function UserProfile({ canvases }) {
+function UserProfile({ canvases, setCanvases }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const createCanvas = () => {
         axios
             .post("/api/v1/canvas/create-canvas", { title: "Board" })
-            .then(() => console.log("canvas created"));
+            .then((response) => {
+                const newCanvas = response.data.data.createdCanvas;
+                setCanvases((prev) => [...prev, newCanvas]);
+            });
     };
 
     useEffect(() => {
