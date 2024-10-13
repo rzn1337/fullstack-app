@@ -34,7 +34,7 @@ const router = createBrowserRouter(
                 path="canvas/:id"
                 element={
                     <AuthLayout authentication={true}>
-                        <Canvas />
+                        <Canvas/>
                     </AuthLayout>
                 }
             />
