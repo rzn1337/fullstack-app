@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { unsetID } from "../../store/canvasSlice";
 
-function Canvas({hist}) {
+function Canvas({ el }) {
     const dispatch = useDispatch();
     const [socket, setSocket] = useState(null);
     const generator = rough.generator({ stroke: "green" });
@@ -195,10 +195,15 @@ function Canvas({hist}) {
         updateState();
     };
 
-    useEffect(() => {}, []);
+    useEffect(() => {
+        console.log("Loading history...", el[0]);
+        console.log("init elements", elements);
+        setElements(el);
+    }, []);
 
     useLayoutEffect(() => {
         // const canvas = document.getElementById("canvas");
+
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -285,9 +290,9 @@ function Canvas({hist}) {
     }, [undo, redo]);
 
     const save = () => {
-        console.log("hist[index]", JSON.stringify(canvas.history[canvas.index]));
+        console.log("canvas state", canvas);
         axios
-            .patch(`/api/v1/canvas/update-canvas/${canvas._id}`, {
+            .patch(`/api/v1/canvas/update-canvas/${canvas.id}`, {
                 history: JSON.stringify(canvas.history[canvas.index]),
                 index: canvas.index,
             })

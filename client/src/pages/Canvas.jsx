@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 function Canvas() {
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
-    const [history, setHistory] = useState(null);
+    const [elements, setElements] = useState(null);
 
     useEffect(() => {
         const fetchCanvas = async () => {
@@ -16,7 +16,7 @@ function Canvas() {
                     `/api/v1/canvas/get-canvas/${id}`
                 );
                 console.log(response);
-                setHistory(response.data.data.history);
+                setElements(JSON.parse(response.data.data.history));
             } catch (error) {
                 console.log(error);
             } finally {
@@ -25,13 +25,13 @@ function Canvas() {
         };
         console.log("params id:", id);
         fetchCanvas();
-    });
+    }, []);
 
     return loading ? (
         <Loader />
     ) : (
         <div>
-            <CanvasComponent hist={history} />
+            <CanvasComponent el={elements} />
         </div>
     );
 }
