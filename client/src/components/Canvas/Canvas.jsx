@@ -196,9 +196,9 @@ function Canvas({ el }) {
     };
 
     useEffect(() => {
-        console.log("Loading history...", el[0]);
+        console.log("Loading history...", el);
         console.log("init elements", elements);
-        setElements(el);
+        el ? setElements(el) : null;
     }, []);
 
     useLayoutEffect(() => {
