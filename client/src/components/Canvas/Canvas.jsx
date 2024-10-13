@@ -285,10 +285,10 @@ function Canvas({hist}) {
     }, [undo, redo]);
 
     const save = () => {
-        console.log(canvas);
+        console.log("hist[index]", JSON.stringify(canvas.history[canvas.index]));
         axios
-            .patch(`/api/v1/canvas/update-canvas/${canvas.id}`, {
-                history: JSON.stringify(canvas.history),
+            .patch(`/api/v1/canvas/update-canvas/${canvas._id}`, {
+                history: JSON.stringify(canvas.history[canvas.index]),
                 index: canvas.index,
             })
             .then(() => console.log("canvas saved"))
