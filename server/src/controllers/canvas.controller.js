@@ -88,7 +88,6 @@ const getUserCanvases = asyncHandler(async (req, res, next) => {
         );
 });
 
-
 // TODO: This
 const getUserCanvas = asyncHandler(async (req, res, _) => {
     /* canvas id received in req body 
@@ -109,8 +108,11 @@ const getUserCanvas = asyncHandler(async (req, res, _) => {
 
     const canvas = await Canvas.findById(id);
 
-    console.log(canvas?.owner);
     console.log(user._id);
+
+    if (!canvas) {
+        throw new ApiError(404, "Canvas not found");
+    }
 
     // if (canvas.owner !== user._id) {
     //     throw new ApiError(401, "Unauthorized request");
