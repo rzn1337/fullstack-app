@@ -15,7 +15,8 @@ function Canvas() {
                 const response = await axios.get(
                     `/api/v1/canvas/get-canvas/${id}`
                 );
-                // setHistory(response.data.data.history) // TODO
+                console.log(response);
+                setHistory(response.data.data.history);
             } catch (error) {
                 console.log(error);
             } finally {
@@ -27,11 +28,11 @@ function Canvas() {
     });
 
     return loading ? (
-        <div>
-            <CanvasComponent />
-        </div>
-    ) : (
         <Loader />
+    ) : (
+        <div>
+            <CanvasComponent hist={history} />
+        </div>
     );
 }
 

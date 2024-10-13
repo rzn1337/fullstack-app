@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { unsetID } from "../../store/canvasSlice";
 
-function Canvas() {
+function Canvas({hist}) {
     const dispatch = useDispatch();
     const [socket, setSocket] = useState(null);
     const generator = rough.generator({ stroke: "green" });
