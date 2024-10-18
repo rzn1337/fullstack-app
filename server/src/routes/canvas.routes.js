@@ -6,6 +6,7 @@ import {
     updateUserCanvas,
     generateShareableLink,
     getShareableCanvas,
+    deleteCanvas,
 } from "../controllers/canvas.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -17,5 +18,6 @@ router.route("/get-canvas/:id").get(verifyJWT, getUserCanvas);
 router.route("/update-canvas/:id").patch(verifyJWT, updateUserCanvas);
 router.route("/:id/share").post(verifyJWT, generateShareableLink);
 router.route("/share/:id").get(verifyJWT, getShareableCanvas);
+router.route("/delete/:id").delete(verifyJWT, deleteCanvas);
 
 export default router;

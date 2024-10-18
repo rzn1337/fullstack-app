@@ -1,7 +1,13 @@
-import React from "react";
 import { formatDistanceToNow } from "date-fns";
+import Button from "./Button";
+import { Trash2Icon } from "lucide-react";
 
-function CanvasPreview({ title, lastUpdated = "unknown", onClick }) {
+function CanvasPreview({
+    title,
+    lastUpdated = "unknown",
+    onClick,
+    deleteCanvas,
+}) {
     const lastUpdatedText =
         lastUpdated !== "unknown"
             ? `${formatDistanceToNow(new Date(lastUpdated), { addSuffix: true })}`
@@ -29,22 +35,14 @@ function CanvasPreview({ title, lastUpdated = "unknown", onClick }) {
                             {`Last updated: ${lastUpdatedText}`}
                         </div>
                     </div>
-                    <button className="bg-transparent hover:bg-gray-200 p-1 rounded-full">
-                        <svg
-                            className="h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 6h16M4 12h16M4 18h16"
-                            />
-                        </svg>
-                    </button>
+                    <Button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            deleteCanvas();
+                        }}
+                    >
+                        <Trash2Icon color="red" />
+                    </Button>
                 </div>
             </div>
         </div>

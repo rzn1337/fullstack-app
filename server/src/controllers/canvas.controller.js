@@ -236,6 +236,34 @@ const getShareableCanvas = asyncHandler(async (req, res) => {
         );
 });
 
+const deleteCanvas = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { _id } = req.user;
+
+    if (!id) {
+        throw new ApiError(404, "Canvas id not found");
+    }
+
+    const canvasToBeDeleted = await Canvas.findById(id).populate(
+        "owner",
+        "_id"
+    );
+
+    if (!canvasToBeDeleted) {
+        throw new ApiError(404, "Canvas not found");
+    }
+
+    if (!canvasToBeDeleted.owner._id.equals(_id)) {
+        throw new ApiError(403, "Unauthorized access");
+    }
+
+    const canvas = await Canvas.findByIdAndDelete(id);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Canvas deleted successfully"));
+});
+
 export {
     createCanvas,
     getUserCanvases,
@@ -243,4 +271,5 @@ export {
     updateUserCanvas,
     generateShareableLink,
     getShareableCanvas,
+    deleteCanvas,
 };

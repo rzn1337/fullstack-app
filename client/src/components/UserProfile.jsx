@@ -10,6 +10,8 @@ import { setID } from "../store/canvasSlice";
 function UserProfile({ canvases, setCanvases }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    // const canvasID = useSelector((state) => state.canvas.id);
+
     const createCanvas = () => {
         axios
             .post("/api/v1/canvas/create-canvas", { title: "Board" })
@@ -34,6 +36,16 @@ function UserProfile({ canvases, setCanvases }) {
             .catch((error) => console.log(error));
     };
 
+    const deleteCanvas = (id) => {
+        axios
+            .delete(`/api/v1/canvas/delete/${id}`)
+            .then(() => {
+                setCanvases(prev => prev.filter((canvas) => canvas._id !== id))
+                console.log(canvases)
+            })
+            .catch((error) => console.log(error));
+    };
+
     return (
         <div className="flex flex-col h-full">
             <main className="flex-1 bg-muted/40 p-6 grid gap-6 overflow-auto">
@@ -44,6 +56,7 @@ function UserProfile({ canvases, setCanvases }) {
                             title={canvas.title}
                             lastUpdated={canvas.updatedAt}
                             onClick={() => handleClick(canvas._id)}
+                            deleteCanvas={() => deleteCanvas(canvas._id)}
                         />
                     ))}
                 </div>
