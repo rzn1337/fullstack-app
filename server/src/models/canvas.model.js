@@ -14,9 +14,15 @@ const canvasSchema = new Schema(
             type: String,
             default: "{[]}",
         },
-        index: {
-            type: Number,
-            default: 0,
+        shareableLink: {
+            type: String,
+            unique: true,
+            sparse: true,
+        },
+        permission: {
+            type: String,
+            enum: ["view", "edit"],
+            default: "view",
         },
     },
     { timestamps: true }

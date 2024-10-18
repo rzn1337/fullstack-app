@@ -27,6 +27,7 @@ function UserHeader({ username = null }) {
                     </div>
                 </div>
                 <Button onClick={handleLogout}>Logout</Button>
+                
             </div>
         </header>
     );

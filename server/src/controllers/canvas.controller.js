@@ -4,6 +4,7 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Schema } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 const createCanvas = asyncHandler(async (req, res, next) => {
     const { user } = req;
@@ -125,13 +126,13 @@ const getUserCanvas = asyncHandler(async (req, res, _) => {
 
 const updateUserCanvas = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const { history, index } = req.body;
+    const { history } = req.body;
 
     if (!id) {
         throw new ApiError(404, "Canvas not found");
     }
 
-    if (!history || !index) {
+    if (!history) {
         throw new ApiError(404, "History and index fields are required");
     }
 
@@ -140,7 +141,6 @@ const updateUserCanvas = asyncHandler(async (req, res, next) => {
         {
             $set: {
                 history,
-                index,
             },
         },
         { new: true }
@@ -160,4 +160,64 @@ const updateUserCanvas = asyncHandler(async (req, res, next) => {
         );
 });
 
-export { createCanvas, getUserCanvases, getUserCanvas, updateUserCanvas };
+const generateShareableLink = asyncHandler(async (req, res) => {
+    const { permission } = req.body;
+    const { id } = req.params;
+    const { user } = req;
+
+    console.log(req.body);
+    console.log(req.params);
+    console.log(req.user);
+
+    if (!permission) {
+        throw new ApiError(404, "Specify permission for the shareable link");
+    }
+
+    const canvas = await Canvas.findById(id);
+
+    if (!canvas) {
+        throw new ApiError(
+            500,
+            "Something went wrong while fetching the canvas"
+        );
+    }
+
+    if (!canvas.owner.equals(user._id)) {
+        throw new ApiError(403, "Unauthorized access");
+    }
+
+    console.log();
+    console.log(typeof canvas.owner);
+    console.log(typeof user._id);
+
+    const shareableLink = uuidv4();
+
+    canvas.shareableLink = shareableLink;
+    canvas.permission = permission;
+
+    try {
+        await canvas.save();
+    } catch (error) {
+        throw new ApiError(500, error.message);
+    }
+
+    const fullShareableLink = `${process.env.FRONTEND_URL}/share/${shareableLink}`;
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                fullShareableLink,
+                "Shareable link generated successfully"
+            )
+        );
+});
+
+export {
+    createCanvas,
+    getUserCanvases,
+    getUserCanvas,
+    updateUserCanvas,
+    generateShareableLink,
+};

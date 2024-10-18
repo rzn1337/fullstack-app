@@ -14,7 +14,7 @@ import {
 } from "./utils";
 import { io } from "socket.io-client";
 import Button from "../Button";
-import { Save } from "lucide-react";
+import { Save, Share2Icon } from "lucide-react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -263,7 +263,7 @@ function Canvas({ el }) {
                 break;
             case "freedraw":
                 const stroke = getSvgPathFromStroke(
-                    getStroke(element.points, { size: 10 })
+                    getStroke(element.points, { size: 5 })
                 );
                 ctx.fillStyle = "black";
                 ctx.fill(new Path2D(stroke));
@@ -300,13 +300,22 @@ function Canvas({ el }) {
             .catch((err) => console.log(err));
     };
 
+    const share = () => {
+        axios
+            .post(`/api/v1/canvas/${canvas.id}/share`, {permission: "view"})
+            .then((res) => console.log(res.data.data))
+            .catch((err) => console.log(err));
+    };
+
     return (
         <div className="w-full h-full bg-dots-pattern bg-dots-size text-gray-300">
-            {/* <Button onClick={saveCanvas}>Save</Button> */}
             <Toolbar setTool={setTool} />
             <div className="fixed top-2 left-10 transform -translate-x-1/2 bg-black backdrop-blur-lg rounded-lg shadow-lg">
                 <Button onClick={save}>
                     <Save />
+                </Button>
+                <Button onClick={share}>
+                    <Share2Icon />
                 </Button>
             </div>
             <canvas
