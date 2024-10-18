@@ -214,10 +214,33 @@ const generateShareableLink = asyncHandler(async (req, res) => {
         );
 });
 
+const getShareableCanvas = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const shareableCanvas = await Canvas.findOne({
+        shareableLink: id,
+    }).populate("owner", "username -_id");
+
+    if (!shareableCanvas) {
+        throw new ApiError(500, "Canvas not found");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                shareableCanvas,
+                "Shareable canvas fetched successfully"
+            )
+        );
+});
+
 export {
     createCanvas,
     getUserCanvases,
     getUserCanvas,
     updateUserCanvas,
     generateShareableLink,
+    getShareableCanvas,
 };
