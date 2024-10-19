@@ -17,6 +17,7 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import Loader from "./components/Loader/Loader.jsx";
 import AuthLayout from "./components/AuthLayout.jsx";
 import Canvas from "./pages/Canvas.jsx";
+import CanvasComponent from "./components/Canvas/Canvas.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -29,12 +30,27 @@ const router = createBrowserRouter(
                     </AuthLayout>
                 }
             />
-            <Route path="profile" element={<AuthLayout authentication={true}><ProfilePage /></AuthLayout>} />
+            <Route
+                path="profile"
+                element={
+                    <AuthLayout authentication={true}>
+                        <ProfilePage />
+                    </AuthLayout>
+                }
+            />
             <Route
                 path="canvas/:id"
                 element={
                     <AuthLayout authentication={true}>
-                        <Canvas/>
+                        <Canvas />
+                    </AuthLayout>
+                }
+            />
+            <Route
+                path="share/:shareableLink"
+                element={
+                    <AuthLayout authentication={true}>
+                        <CanvasComponent />
                     </AuthLayout>
                 }
             />

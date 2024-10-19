@@ -19,11 +19,17 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { unsetID } from "../../store/canvasSlice";
+import { useParams, useLocation } from "react-router-dom";
 
 function Canvas({ el }) {
     const dispatch = useDispatch();
-    const [socket, setSocket] = useState(null);
+    const location = useLocation();
+    const shareableLink = location.pathname.startsWith("/share/")
+        ? useParams()
+        : null;
+    const socket = io(import.meta.env.VITE_APP_SOCKET_URL);
     const generator = rough.generator({ stroke: "green" });
+    const [permission, setPermission] = useState("edit");
 
     const canvas = useSelector((state) => state.canvas);
 
@@ -196,6 +202,35 @@ function Canvas({ el }) {
     };
 
     useEffect(() => {
+        // if ()
+        console.log("shareable link", shareableLink);
+
+        console.log("new socket", socket);
+
+        return () => {
+            socket.disconnect();
+            dispatch(unsetID());
+        };
+    }, []);
+
+    useEffect(() => {
+        if (shareableLink) {
+            axios
+                .get(`/api/v1/canvas/share/${shareableLink.shareableLink}`)
+                .then((response) => {
+                    const { permission, history } = response.data.data;
+                    console.log("responsehistory", response.data.data.history);
+                    setElements(JSON.parse(history));
+                    setPermission(permission);
+                    socket.emit("join-room", shareableLink.shareableLink);
+                })
+                .catch((error) => console.error(error));
+        }
+    }, [shareableLink]);
+
+    // loads history from the incoming array
+    useEffect(() => {
+        if (!shareableLink) return;
         console.log("Loading history...", el);
         console.log("init elements", elements);
         el ? setElements(el) : null;
@@ -221,26 +256,10 @@ function Canvas({ el }) {
     }, [elements]);
 
     useEffect(() => {
-        const newSocket = io(import.meta.env.VITE_APP_SOCKET_URL);
-        setSocket(newSocket);
-
-        return () => {
-            newSocket.disconnect();
-            dispatch(unsetID());
-        };
-    }, []);
-
-    useEffect(() => {
         if (!socket) return;
 
         socket.on("update", (elements) => {
-            console.log("Received elements:", elements);
-            console.log("Type of elements:", typeof elements);
-            console.log("Is array:", Array.isArray(elements));
-
-            elements.forEach((element) => console.log(element.id, element));
-
-            // setElements(elements)
+            setElements(elements);
 
             const canvas = canvasRef.current;
             const ctx = canvas.getContext("2d");
@@ -302,7 +321,7 @@ function Canvas({ el }) {
 
     const share = () => {
         axios
-            .post(`/api/v1/canvas/${canvas.id}/share`, {permission: "view"})
+            .post(`/api/v1/canvas/${canvas.id}/share`, { permission: "view" })
             .then((res) => console.log(res.data.data))
             .catch((err) => console.log(err));
     };

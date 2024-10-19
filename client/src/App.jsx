@@ -14,22 +14,30 @@ function App() {
     const dispatch = useDispatch();
     const location = useLocation();
     const hideHeaderPaths = ["/canvas", "/profile", "/"];
-    const hideHeader = hideHeaderPaths.some(
-        (path) => location.pathname.substring(path)
+    const hideHeader = hideHeaderPaths.some((path) =>
+        location.pathname.substring(path)
     );
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(location.pathname)
+        console.log(location.pathname);
         const getCurrentUser = async () => {
             try {
                 const response = await axios.get(
                     "/api/v1/users/get-current-user"
                 );
+
                 if (response.data.data.user) {
                     console.log("get current user", response.data.data);
+
+                    // Dispatch the loginUser action with the user data
                     dispatch(loginUser(response.data.data.user));
-                    navigate("/profile");
+
+                    // Conditionally navigate to the profile page
+                    // Only navigate if the current route is not a shareable canvas route
+                    if (!location.pathname.startsWith("/share/")) {
+                        navigate("/profile");
+                    }
                 } else {
                     dispatch(logoutUser());
                 }
