@@ -17,15 +17,34 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    const allSocketIds = io.sockets.sockets.keys();
-    console.log("All connected socket IDs:", allSocketIds);
+  // Get all rooms (including default rooms created by Socket.IO)
+  const rooms = io.sockets.adapter.rooms;
 
-    console.log("client count:", io.engine.clientsCount);
+  // Loop through all rooms and log the users in each room
+  rooms.forEach((room, roomId) => {
+    // If the room ID is also a socket ID, then it's not a custom room
+    if (room.has(socket.id)) {
+      console.log(`Skipping room ${roomId}, as it's the socket's own room.`);
+    } else {
+      // Custom room (created via socket.join())
+      const usersInRoom = Array.from(room);
+
+      console.log(`Room ID: ${roomId}`);
+      console.log(`Users in this room:`, usersInRoom);
+    }
+  });
+
+  console.log("Total connected clients:", io.engine.clientsCount);
 
     socket.on("join-room", (shareableLink) => {
         console.log("shareablelink:", shareableLink);
         socket.join(shareableLink);
         console.log(`A user joined the room ${shareableLink}`);
+    });
+
+    socket.on("updateCanvas", (payload) => {
+        console.log("updateCanvas", payload);
+        socket.to(payload.shareableLink).emit("canvasUpdated", payload.elements)
     });
 
     socket.on("drawing", ({ shareableLink, drawings }) => {

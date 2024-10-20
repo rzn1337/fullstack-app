@@ -21,13 +21,13 @@ import { useDispatch } from "react-redux";
 import { unsetID } from "../../store/canvasSlice";
 import { useParams, useLocation } from "react-router-dom";
 
-function Canvas({ el }) {
+function Canvas({ el, roomLink, isOwner = false }) {
     const dispatch = useDispatch();
     const location = useLocation();
-    const shareableLink = location.pathname.startsWith("/share/")
-        ? useParams()
-        : null;
-    const socket = io(import.meta.env.VITE_APP_SOCKET_URL);
+    const params = location.pathname.startsWith("/share/") ? useParams() : null;
+    // const socket = io(import.meta.env.VITE_APP_SOCKET_URL);
+    // const [socket, setSocket] = useState(null);
+    const socket = useRef(null); // for persistent socket on re-renders
     const generator = rough.generator({ stroke: "green" });
     const [permission, setPermission] = useState("edit");
 
@@ -202,39 +202,56 @@ function Canvas({ el }) {
     };
 
     useEffect(() => {
-        // if ()
-        console.log("shareable link", shareableLink);
+        console.log("roomlink:", roomLink);
+        console.log("params shareable link:", params?.shareableLink);
+        socket.current = io(import.meta.env.VITE_APP_SOCKET_URL);
 
-        console.log("new socket", socket);
+        console.log("scoket", socket);
+
+        socket.current.on("canvasUpdated", (elements) => {
+            console.log("canvasUpdated", elements);
+            console.log("is array: ", Array.isArray(elements))
+            setElements(elements);
+        });
+
+        // return () => {
+        //     if (newSocket) {
+        //         newSocket.disconnect();
+        //     }
+        // };
 
         return () => {
-            socket.disconnect();
+            socket.current.disconnect();
             dispatch(unsetID());
         };
-    }, []);
-
-    useEffect(() => {
-        if (shareableLink) {
-            axios
-                .get(`/api/v1/canvas/share/${shareableLink.shareableLink}`)
-                .then((response) => {
-                    const { permission, history } = response.data.data;
-                    console.log("responsehistory", response.data.data.history);
-                    setElements(JSON.parse(history));
-                    setPermission(permission);
-                    socket.emit("join-room", shareableLink.shareableLink);
-                })
-                .catch((error) => console.error(error));
-        }
-    }, [shareableLink]);
+    }, [params?.shareableLink]);
 
     // loads history from the incoming array
     useEffect(() => {
-        if (!shareableLink) return;
+        if (!params) return;
         console.log("Loading history...", el);
         console.log("init elements", elements);
         el ? setElements(el) : null;
     }, []);
+
+    useEffect(() => {
+        if (params) {
+            axios
+                .get(`/api/v1/canvas/share/${params.shareableLink}`)
+                .then((response) => {
+                    const { permission, history } = response.data.data;
+                    if (!history === "[{}]") {
+                        setElements(JSON.parse(history));
+                    }
+
+                    setPermission(permission);
+                    socket.current.emit("join-room", params.shareableLink); // join canvas room
+                })
+                .catch((error) => console.error(error));
+        } else if (isOwner) {
+            socket.current.emit("join-room", roomLink);
+        }
+    }, [params]);
 
     useLayoutEffect(() => {
         // const canvas = document.getElementById("canvas");
@@ -248,30 +265,34 @@ function Canvas({ el }) {
         const roughCanvas = rough.canvas(canvasRef.current);
 
         // elements.forEach(({ roughElement }) => roughCanvas.draw(roughElement));
-        elements.forEach((element) => drawElement(roughCanvas, ctx, element));
-        if (elements && elements.length > 0) {
-            socket.emit("update", elements);
+        // elements.forEach((element) => drawElement(roughCanvas, ctx, element));
+        if (elements && elements.length > 0 && params) {
+            socket.current.emit("updateCanvas", {
+                shareableLink: params.shareableLink,
+                elements,
+            });
         }
+
         console.log("actual elements", elements);
     }, [elements]);
 
-    useEffect(() => {
-        if (!socket) return;
+    // useEffect(() => {
+    //     if (!socket) return;
 
-        socket.on("update", (elements) => {
-            setElements(elements);
+    //     socket.on("update", (elements) => {
+    //         setElements(elements);
 
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //         const canvas = canvasRef.current;
+    //         const ctx = canvas.getContext("2d");
+    //         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            const roughCanvas = rough.canvas(canvasRef.current);
+    //         const roughCanvas = rough.canvas(canvasRef.current);
 
-            elements.forEach((element) =>
-                drawElement(roughCanvas, ctx, element)
-            );
-        });
-    }, [socket]);
+    //         elements.forEach((element) =>
+    //             drawElement(roughCanvas, ctx, element)
+    //         );
+    //     });
+    // }, [socket]);
 
     const drawElement = (roughCanvas, ctx, element) => {
         const { type } = element;

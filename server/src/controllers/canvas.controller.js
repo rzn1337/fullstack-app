@@ -21,7 +21,13 @@ const createCanvas = asyncHandler(async (req, res, next) => {
     console.log("THISSSSSSSSSSSSSSSSSSSS");
     console.log(user);
 
-    const createdCanvas = await Canvas.create({ owner: user._id, title });
+    const shareableLink = uuidv4();
+
+    const createdCanvas = await Canvas.create({
+        owner: user._id,
+        title,
+        shareableLink,
+    });
 
     if (!createdCanvas) {
         throw new ApiError(
@@ -175,6 +181,8 @@ const generateShareableLink = asyncHandler(async (req, res) => {
 
     const canvas = await Canvas.findById(id);
 
+    
+
     if (!canvas) {
         throw new ApiError(
             500,
@@ -190,9 +198,6 @@ const generateShareableLink = asyncHandler(async (req, res) => {
     console.log(typeof canvas.owner);
     console.log(typeof user._id);
 
-    const shareableLink = uuidv4();
-
-    canvas.shareableLink = shareableLink;
     canvas.permission = permission;
 
     try {
@@ -201,7 +206,7 @@ const generateShareableLink = asyncHandler(async (req, res) => {
         throw new ApiError(500, error.message);
     }
 
-    const fullShareableLink = `${process.env.FRONTEND_URL}/share/${shareableLink}`;
+    const fullShareableLink = `${process.env.FRONTEND_URL}/share/${canvas.shareableLink}`;
 
     return res
         .status(200)

@@ -17,7 +17,7 @@ const canvasSchema = new Schema(
         shareableLink: {
             type: String,
             unique: true,
-            sparse: true,
+            // sparse: true,
         },
         permission: {
             type: String,
