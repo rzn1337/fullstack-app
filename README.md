@@ -100,4 +100,4 @@ This project is licensed under the [MIT License](LICENSE).
 For questions, feedback, or support, please reach out:
 
 - **GitHub Issues**: [https://github.com/rzn1337/boardy/issues](https://github.com/rzn1337/boardy/issues)
-- **Email**: [alirizwan2003@gmail.com](mailto:alirizwan2003@gmail.com) (replace with your actual email)
+- **Email**: [alirizwan2003@gmail.com](mailto:alirizwan2003@gmail.com)
