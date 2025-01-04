@@ -17,10 +17,11 @@ function Canvas() {
                     `/api/v1/canvas/get-canvas/${id}`
                 );
                 console.log(response);
+                console.log("jksabdk", response.data.data.history)
                 if (!response.data.data.history === "{[]}") {
                     setElements(JSON.parse(response.data.data.history));
                 }
-
+                setElements(JSON.parse(response.data.data.history));
                 setShareableLink(response.data.data.shareableLink);
                 console.log("response.shareablelinkkkk:", shareableLink);
             } catch (error) {

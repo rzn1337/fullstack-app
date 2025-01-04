@@ -5,6 +5,8 @@ import Loader from "../components/Loader/Loader";
 import UserProfile from "../components/UserProfile";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+
 
 function ProfilePage() {
     const [loading, setLoading] = useState(true);

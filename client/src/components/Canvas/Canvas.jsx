@@ -228,7 +228,7 @@ function Canvas({ el, roomLink, isOwner = false }) {
 
     // loads history from the incoming array
     useEffect(() => {
-        if (!params) return;
+        // if (!params) return;
         console.log("Loading history...", el);
         console.log("init elements", elements);
         el ? setElements(el) : null;
@@ -265,7 +265,7 @@ function Canvas({ el, roomLink, isOwner = false }) {
         const roughCanvas = rough.canvas(canvasRef.current);
 
         // elements.forEach(({ roughElement }) => roughCanvas.draw(roughElement));
-        // elements.forEach((element) => drawElement(roughCanvas, ctx, element));
+        elements.forEach((element) => drawElement(roughCanvas, ctx, element));
         if (elements && elements.length > 0 && params) {
             socket.current.emit("updateCanvas", {
                 shareableLink: params.shareableLink,
